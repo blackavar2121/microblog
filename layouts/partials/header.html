@@ -1,0 +1,19 @@
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-brand">
+      {{ with .Site.Params.avatar }}
+      <a href="{{ "/" | absURL }}" class="avatar-link">
+        <img src="{{ . }}" alt="{{ $.Site.Title }}" class="site-avatar">
+      </a>
+      {{ end }}
+      <a href="{{ "/" | absURL }}" class="site-title">{{ .Site.Title }}</a>
+    </div>
+    <nav class="site-nav">
+      <a href="{{ "/" | absURL }}"{{ if .IsHome }} class="active"{{ end }}>Home</a>
+      <a href="{{ "/photos/" | absURL }}"{{ if eq .Section "photos" }} class="active"{{ end }}>Photos</a>
+      <a href="{{ "/books/" | absURL }}"{{ if eq .Section "books" }} class="active"{{ end }}>Books</a>
+      <a href="{{ "/categories/games/" | absURL }}">Games</a>
+      <a href="{{ "/categories/pigeons/" | absURL }}">Pigeons 🐦</a>
+    </nav>
+  </div>
+</header>

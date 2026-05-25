@@ -1,0 +1,20 @@
+<article class="book-card">
+  {{ with .Params.book_cover }}
+  <div class="book-cover">
+    <a href="{{ $.Permalink }}"><img src="{{ . }}" alt="{{ $.Params.book_title | default $.Title }}"></a>
+  </div>
+  {{ end }}
+  <div class="book-info">
+    <h3 class="book-title">
+      <a href="{{ .Permalink }}">{{ .Params.book_title | default .Title }}</a>
+    </h3>
+    {{ with .Params.book_author }}<p class="book-author">by {{ . }}</p>{{ end }}
+    {{ with .Params.rating }}
+    <p class="book-rating">
+      {{ range seq . }}★{{ end }}{{ range seq (sub 5 .) }}☆{{ end }}
+    </p>
+    {{ end }}
+    {{ if .Content }}<div class="book-review">{{ .Summary }}</div>{{ end }}
+    <p class="book-meta"><time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2006" }}</time></p>
+  </div>
+</article>

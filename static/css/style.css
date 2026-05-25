@@ -1,0 +1,694 @@
+/* ============================================
+   Pigeon Town — Micro.blog Theme
+   Palette drawn from real pigeon plumage
+   ============================================ */
+
+:root {
+  --gray-warm:          #7a7470;
+  --gray-light:         #b5afa9;
+  --gray-pale:          #d9d4cf;
+  --gray-dark:          #4a4545;
+  --iridescent-green:   #5a7c65;
+  --iridescent-purple:  #6e5c7a;
+  --iridescent-teal:    #4f7b7d;
+  --blush:              #c2a092;
+  --cream:              #f0ebe5;
+  --text-dark:          #2c2927;
+  --text-mid:           #5c5652;
+  --text-light:         #8a837d;
+  --bg-page:            #f5f1ec;
+  --bg-card:            #ffffff;
+  --bg-footer:          #3d3835;
+  --border-light:       #e0dbd5;
+  --border-mid:         #c5bfb8;
+}
+
+/* ============================================
+   Reset
+   ============================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--text-dark);
+  background-color: var(--bg-page);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  color: var(--iridescent-teal);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--iridescent-purple);
+}
+
+/* ============================================
+   Layout
+   ============================================ */
+
+.site-main {
+  flex: 1;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* ============================================
+   Header
+   ============================================ */
+
+.site-header {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-light);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0.875rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+.site-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.site-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  letter-spacing: -0.01em;
+}
+
+.site-title:hover {
+  color: var(--iridescent-teal);
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.site-nav a {
+  font-size: 0.875rem;
+  color: var(--text-mid);
+  font-weight: 500;
+}
+
+.site-nav a:hover,
+.site-nav a.active {
+  color: var(--iridescent-teal);
+}
+
+.site-nav a[href*="pigeons"] {
+  color: var(--iridescent-purple);
+}
+
+.site-nav a[href*="pigeons"]:hover {
+  color: var(--iridescent-green);
+}
+
+/* ============================================
+   Feed
+   ============================================ */
+
+.feed-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ============================================
+   Post Cards (shared)
+   ============================================ */
+
+.post-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.post-card:hover {
+  border-color: var(--border-mid);
+  box-shadow: 0 2px 8px rgba(44, 41, 39, 0.06);
+}
+
+.post-body {
+  padding: 1.125rem 1.25rem;
+}
+
+.post-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* ============================================
+   Micro posts — short, no title
+   ============================================ */
+
+.post-micro .post-body {
+  padding: 1rem 1.25rem;
+}
+
+.post-micro .post-content {
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--text-dark);
+}
+
+/* ============================================
+   Article posts — have a title
+   ============================================ */
+
+.post-article .post-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+  margin-bottom: 0.5rem;
+}
+
+.post-article .post-title a {
+  color: var(--text-dark);
+}
+
+.post-article .post-title a:hover {
+  color: var(--iridescent-teal);
+}
+
+.post-article .post-content {
+  font-size: 0.9375rem;
+  color: var(--text-mid);
+  line-height: 1.65;
+  margin-bottom: 0.25rem;
+}
+
+/* ============================================
+   Photo posts
+   ============================================ */
+
+.post-photo .post-image img {
+  width: 100%;
+  height: auto;
+  max-height: 520px;
+  object-fit: cover;
+}
+
+.post-photo .post-body {
+  padding: 0.75rem 1.25rem;
+}
+
+.post-photo .post-content {
+  font-size: 0.875rem;
+  color: var(--text-mid);
+  line-height: 1.55;
+}
+
+/* ============================================
+   Post meta (date, categories, read more)
+   ============================================ */
+
+.post-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
+}
+
+.post-meta time {
+  font-size: 0.8125rem;
+  color: var(--text-light);
+}
+
+.post-categories {
+  display: flex;
+  gap: 0.375rem;
+  flex-wrap: wrap;
+}
+
+.post-category {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--iridescent-teal);
+  background: var(--cream);
+  padding: 0.15em 0.55em;
+  border-radius: 3px;
+  text-transform: lowercase;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.post-category:hover {
+  background: var(--gray-pale);
+  color: var(--iridescent-purple);
+}
+
+.post-readmore {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--iridescent-teal);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.post-readmore:hover {
+  color: var(--iridescent-purple);
+}
+
+/* ============================================
+   Single post view
+   ============================================ */
+
+.post-single {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Single — article header */
+.post-header {
+  padding: 1.75rem 1.75rem 0;
+}
+
+.post-header .post-title {
+  font-size: 1.625rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  color: var(--text-dark);
+  margin-bottom: 0.875rem;
+}
+
+.post-header .post-meta {
+  margin-top: 0;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+/* Single — body */
+.post-single .post-content {
+  padding: 1.5rem 1.75rem;
+  font-size: 1rem;
+  line-height: 1.78;
+  color: var(--text-dark);
+}
+
+.post-single .post-content > * + * {
+  margin-top: 1.125rem;
+}
+
+.post-single .post-content h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--text-dark);
+  margin-top: 2rem;
+}
+
+.post-single .post-content h3 {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-top: 1.75rem;
+}
+
+.post-single .post-content ul,
+.post-single .post-content ol {
+  padding-left: 1.5rem;
+}
+
+.post-single .post-content li + li {
+  margin-top: 0.25rem;
+}
+
+.post-single .post-content blockquote {
+  border-left: 3px solid var(--iridescent-teal);
+  padding: 0.375rem 0 0.375rem 1.125rem;
+  color: var(--text-mid);
+  font-style: italic;
+}
+
+.post-single .post-content code {
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 0.875em;
+  background: var(--cream);
+  padding: 0.125em 0.35em;
+  border-radius: 3px;
+  color: var(--iridescent-purple);
+}
+
+.post-single .post-content pre {
+  background: var(--gray-dark);
+  color: var(--gray-pale);
+  padding: 1.125rem 1.25rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 0.875rem;
+}
+
+.post-single .post-content pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  font-size: inherit;
+}
+
+.post-single .post-content img {
+  border-radius: 6px;
+  margin: 0.25rem 0;
+}
+
+/* Single — micro post */
+.post-single.post-micro .post-content {
+  font-size: 1.0625rem;
+  padding: 1.5rem 1.75rem;
+}
+
+.post-meta-solo {
+  border-top: 1px solid var(--border-light);
+  margin-top: 0 !important;
+  padding: 0.875rem 1.75rem;
+}
+
+/* Single — photo post */
+.post-photos {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.post-figure {
+  margin: 0;
+}
+
+.post-figure img {
+  width: 100%;
+  height: auto;
+}
+
+.post-single.post-photo .post-content {
+  font-size: 0.9375rem;
+  color: var(--text-mid);
+}
+
+/* ============================================
+   List pages (categories, tags, sections)
+   ============================================ */
+
+.list-page {
+  /* inherits site-main padding */
+}
+
+.list-header {
+  margin-bottom: 1.5rem;
+}
+
+.list-title {
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-dark);
+}
+
+.list-description {
+  font-size: 0.9375rem;
+  color: var(--text-mid);
+  margin-top: 0.375rem;
+}
+
+/* ============================================
+   Books page
+   ============================================ */
+
+.books-page .list-header {
+  margin-bottom: 1.75rem;
+}
+
+.bookshelf {
+  margin-bottom: 2rem;
+}
+
+.bookshelf-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-light);
+  margin-bottom: 0.875rem;
+}
+
+.books-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.book-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 1.125rem 1.25rem;
+  display: flex;
+  gap: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.book-card:hover {
+  border-color: var(--border-mid);
+}
+
+.book-cover {
+  flex-shrink: 0;
+  width: 60px;
+}
+
+.book-cover img {
+  width: 60px;
+  border-radius: 3px;
+  box-shadow: 2px 3px 10px rgba(44, 41, 39, 0.18);
+}
+
+.book-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.book-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  line-height: 1.3;
+  margin-bottom: 0.2rem;
+}
+
+.book-title a {
+  color: var(--text-dark);
+}
+
+.book-title a:hover {
+  color: var(--iridescent-teal);
+}
+
+.book-author {
+  font-size: 0.8125rem;
+  color: var(--text-mid);
+  margin-bottom: 0.4rem;
+}
+
+.book-rating {
+  font-size: 0.875rem;
+  color: var(--blush);
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.book-review {
+  font-size: 0.875rem;
+  color: var(--text-mid);
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+.book-meta time {
+  font-size: 0.8125rem;
+  color: var(--text-light);
+}
+
+/* ============================================
+   Pagination
+   ============================================ */
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.375rem;
+  margin-top: 2rem;
+  padding-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.pagination a,
+.pagination span {
+  font-size: 0.875rem;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid var(--border-light);
+  border-radius: 5px;
+  color: var(--text-mid);
+  background: var(--bg-card);
+  transition: border-color 0.15s ease, color 0.15s ease;
+  line-height: 1.4;
+}
+
+.pagination a:hover {
+  border-color: var(--iridescent-teal);
+  color: var(--iridescent-teal);
+}
+
+.pagination .active span {
+  background: var(--iridescent-teal);
+  color: #fff;
+  border-color: var(--iridescent-teal);
+}
+
+/* ============================================
+   Footer
+   ============================================ */
+
+.site-footer {
+  background: var(--bg-footer);
+  color: var(--gray-pale);
+  padding: 2rem 1rem;
+  margin-top: auto;
+}
+
+.footer-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.footer-name {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--gray-light);
+  margin-bottom: 0.75rem;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.footer-links a {
+  font-size: 0.875rem;
+  color: var(--gray-light);
+}
+
+.footer-links a:hover {
+  color: var(--iridescent-teal);
+}
+
+.footer-credit {
+  font-size: 0.8125rem;
+  color: var(--gray-warm);
+}
+
+.footer-credit a {
+  color: var(--gray-warm);
+}
+
+.footer-credit a:hover {
+  color: var(--iridescent-teal);
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 600px) {
+  .header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .site-nav {
+    gap: 0.875rem;
+  }
+
+  .site-main {
+    padding: 1.25rem 0.875rem;
+  }
+
+  .post-body {
+    padding: 1rem;
+  }
+
+  .post-single .post-content,
+  .post-header {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .post-meta-solo {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .post-header .post-title {
+    font-size: 1.375rem;
+  }
+
+  .book-card {
+    flex-direction: row;
+  }
+}

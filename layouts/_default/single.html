@@ -1,0 +1,52 @@
+{{ define "main" }}
+{{ $hasTitle := and .Title (gt (len .Title) 0) }}
+{{ $hasImages := gt (len (.Resources.ByType "image")) 0 }}
+{{ $postClass := cond $hasImages "post-photo" (cond $hasTitle "post-article" "post-micro") }}
+
+<article class="post-single {{ $postClass }}">
+
+  {{ if $hasImages }}
+  <div class="post-photos">
+    {{ range .Resources.ByType "image" }}
+    <figure class="post-figure">
+      <img src="{{ .RelPermalink }}" alt="">
+    </figure>
+    {{ end }}
+  </div>
+  {{ end }}
+
+  {{ if $hasTitle }}
+  <header class="post-header">
+    <h1 class="post-title">{{ .Title }}</h1>
+    <div class="post-meta">
+      <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format "January 2, 2006" }}</time>
+      {{ with .Params.categories }}
+      <span class="post-categories">
+        {{ range . }}
+        <a href="{{ "/categories/" | absURL }}{{ . | urlize }}/" class="post-category">{{ . }}</a>
+        {{ end }}
+      </span>
+      {{ end }}
+    </div>
+  </header>
+  {{ end }}
+
+  <div class="post-content">
+    {{ .Content }}
+  </div>
+
+  {{ if not $hasTitle }}
+  <footer class="post-meta post-meta-solo">
+    <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format "January 2, 2006 · 3:04 PM" }}</time>
+    {{ with .Params.categories }}
+    <span class="post-categories">
+      {{ range . }}
+      <a href="{{ "/categories/" | absURL }}{{ . | urlize }}/" class="post-category">{{ . }}</a>
+      {{ end }}
+    </span>
+    {{ end }}
+  </footer>
+  {{ end }}
+
+</article>
+{{ end }}

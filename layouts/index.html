@@ -1,0 +1,8 @@
+{{ define "main" }}
+<div class="feed-container">
+  {{ range .Paginator.Pages }}
+    {{ partial "post-card.html" . }}
+  {{ end }}
+  {{ template "_internal/pagination.html" . }}
+</div>
+{{ end }}

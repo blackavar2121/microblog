@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pigeon Town — Theme Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Preview-only: fake image placeholders */
+    .fake-photo {
+      width: 100%;
+      background: linear-gradient(135deg, #b5afa9 0%, #7a7470 50%, #4f7b7d 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.7);
+      font-size: 2rem;
+      letter-spacing: 0.05em;
+      height: 320px;
+    }
+    .fake-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6e5c7a, #4f7b7d);
+      display: inline-block;
+    }
+    .preview-label {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #fff;
+      background: var(--iridescent-teal);
+      padding: 0.2em 0.6em;
+      border-radius: 3px;
+      margin-left: auto;
+      opacity: 0.7;
+    }
+    .post-card .post-meta { position: relative; }
+  </style>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <span class="fake-avatar"></span>
+      <a href="#" class="site-title">Pigeon Town</a>
+    </div>
+    <nav class="site-nav">
+      <a href="#" class="active">Home</a>
+      <a href="#photos">Photos</a>
+      <a href="#books">Books</a>
+      <a href="#games">Games</a>
+      <a href="#pigeons">Pigeons 🐦</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ MAIN FEED ============ -->
+<main class="site-main">
+
+  <!-- ---- Short post (micro) ---- -->
+  <div class="feed-container">
+
+    <article class="post-card post-micro">
+      <div class="post-body">
+        <div class="post-content">
+          <p>The pigeon on the fire escape is back. She's brought a friend this time. They're both judging me through the window while I eat cereal.</p>
+        </div>
+        <footer class="post-meta">
+          <time>May 3, 2026</time>
+          <span class="preview-label">micro</span>
+        </footer>
+      </div>
+    </article>
+
+    <!-- ---- Photo post ---- -->
+    <article class="post-card post-photo" id="photos">
+      <div class="post-image">
+        <a href="#">
+          <div class="fake-photo">🐦</div>
+        </a>
+      </div>
+      <div class="post-body">
+        <div class="post-content">
+          <p>Morning light on the south-facing ledge. The iridescent neck feathers are something else at this angle.</p>
+        </div>
+        <footer class="post-meta">
+          <time>May 2, 2026</time>
+          <span class="post-categories">
+            <a href="#" class="post-category">pigeons</a>
+            <a href="#" class="post-category">photos</a>
+          </span>
+          <span class="preview-label">photo</span>
+        </footer>
+      </div>
+    </article>
+
+    <!-- ---- Long form article ---- -->
+    <article class="post-card post-article">
+      <div class="post-body">
+        <h2 class="post-title"><a href="#">Why Pigeons Are the Most Underrated City Bird</a></h2>
+        <div class="post-content">
+          <p>We walk past them every day and barely register their existence. But look closely at the neck of a rock pigeon in full sun and you'll see a shimmer of green and purple that rivals any tropical species...</p>
+        </div>
+        <footer class="post-meta">
+          <time>Apr 30, 2026</time>
+          <span class="post-categories">
+            <a href="#" class="post-category">pigeons</a>
+          </span>
+          <a href="#" class="post-readmore">Read more →</a>
+          <span class="preview-label">article</span>
+        </footer>
+      </div>
+    </article>
+
+    <!-- ---- Another micro ---- -->
+    <article class="post-card post-micro">
+      <div class="post-body">
+        <div class="post-content">
+          <p>Currently playing <em>Stardew Valley</em> for the 11th time. This time I'm going full pigeon farmer aesthetic.</p>
+        </div>
+        <footer class="post-meta">
+          <time>Apr 29, 2026</time>
+          <span class="post-categories">
+            <a href="#" class="post-category">games</a>
+          </span>
+          <span class="preview-label">micro</span>
+        </footer>
+      </div>
+    </article>
+
+    <!-- ---- Games article ---- -->
+    <article class="post-card post-article" id="games">
+      <div class="post-body">
+        <h2 class="post-title"><a href="#">Hatoful Boyfriend: A Defense</a></h2>
+        <div class="post-content">
+          <p>Yes, it's a visual novel where all the love interests are pigeons. Yes, it has one of the most surprisingly moving storylines in recent game history. Here's why you should play it...</p>
+        </div>
+        <footer class="post-meta">
+          <time>Apr 27, 2026</time>
+          <span class="post-categories">
+            <a href="#" class="post-category">games</a>
+            <a href="#" class="post-category">pigeons</a>
+          </span>
+          <a href="#" class="post-readmore">Read more →</a>
+          <span class="preview-label">article</span>
+        </footer>
+      </div>
+    </article>
+
+  </div>
+
+  <!-- ---- Divider ---- -->
+  <div style="margin: 3rem 0 1.5rem; border-top: 1px solid var(--border-light);"></div>
+
+  <!-- ============ BOOKS PAGE PREVIEW ============ -->
+  <div class="books-page" id="books">
+    <header class="list-header">
+      <h1 class="list-title">Books</h1>
+    </header>
+
+    <section class="bookshelf">
+      <h2 class="bookshelf-label">Currently Reading</h2>
+      <div class="books-feed">
+        <article class="book-card">
+          <div class="book-cover">
+            <div style="width:60px;height:90px;background:linear-gradient(160deg,#5a7c65,#2c2927);border-radius:3px;box-shadow:2px 3px 10px rgba(44,41,39,.18);"></div>
+          </div>
+          <div class="book-info">
+            <h3 class="book-title"><a href="#">Pigeons: The Fascinating Saga of the World's Most Revered and Reviled Bird</a></h3>
+            <p class="book-author">by Andrew D. Blechman</p>
+            <p class="book-rating">★★★★☆</p>
+            <p class="book-meta"><time>May 2026</time></p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="bookshelf">
+      <h2 class="bookshelf-label">Read</h2>
+      <div class="books-feed">
+        <article class="book-card">
+          <div class="book-cover">
+            <div style="width:60px;height:90px;background:linear-gradient(160deg,#6e5c7a,#4a4545);border-radius:3px;box-shadow:2px 3px 10px rgba(44,41,39,.18);"></div>
+          </div>
+          <div class="book-info">
+            <h3 class="book-title"><a href="#">The Passenger Pigeon</a></h3>
+            <p class="book-author">by Errol Fuller</p>
+            <p class="book-rating">★★★★★</p>
+            <div class="book-review"><p>A heartbreaking and beautifully illustrated account of extinction. Changed how I think about abundance and loss.</p></div>
+            <p class="book-meta"><time>March 2026</time></p>
+          </div>
+        </article>
+
+        <article class="book-card">
+          <div class="book-cover">
+            <div style="width:60px;height:90px;background:linear-gradient(160deg,#4f7b7d,#5a7c65);border-radius:3px;box-shadow:2px 3px 10px rgba(44,41,39,.18);"></div>
+          </div>
+          <div class="book-info">
+            <h3 class="book-title"><a href="#">Feathers: The Evolution of a Natural Miracle</a></h3>
+            <p class="book-author">by Thor Hanson</p>
+            <p class="book-rating">★★★★★</p>
+            <div class="book-review"><p>Everything you never knew you needed to know about feathers. Mandatory reading if you stare at pigeons as much as I do.</p></div>
+            <p class="book-meta"><time>January 2026</time></p>
+          </div>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <!-- ---- Divider ---- -->
+  <div style="margin: 3rem 0 1.5rem; border-top: 1px solid var(--border-light);"></div>
+
+  <!-- ============ SINGLE POST PREVIEWS ============ -->
+  <div style="margin-bottom:0.75rem;">
+    <h2 style="font-size:0.8125rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-light);">Single post — article</h2>
+  </div>
+
+  <article class="post-single post-article" style="margin-bottom:2rem;">
+    <header class="post-header">
+      <h1 class="post-title">Why Pigeons Are the Most Underrated City Bird</h1>
+      <div class="post-meta">
+        <time>April 30, 2026</time>
+        <span class="post-categories">
+          <a href="#" class="post-category">pigeons</a>
+        </span>
+      </div>
+    </header>
+    <div class="post-content">
+      <p>We walk past them every day and barely register their existence. But look closely at the neck of a rock pigeon in full sun and you'll see a shimmer of green and purple that rivals any tropical species found in a zoo or nature documentary.</p>
+      <p>The rock pigeon (<em>Columba livia</em>) has been living alongside humans for over ten thousand years. We domesticated them, used them to carry messages in two world wars, and then forgot about them entirely once we invented email.</p>
+      <h2>The iridescence problem</h2>
+      <p>Part of the issue is that pigeons look drab in overcast light. Their iridescent neck feathers — which in good light shift between deep teal, forest green, and bright purple — only really pop in direct sun. We mostly see them in shadows, foraging under awnings.</p>
+      <blockquote>
+        <p>Every pigeon you've ever dismissed as "just a pigeon" was carrying structural color that works on the same principle as a soap bubble or a CD.</p>
+      </blockquote>
+      <p>That shimmer isn't pigment. It's nanostructure — tiny platelets in the feather barbules that scatter light selectively. The same physics that makes a rainbow.</p>
+      <h2>What they're actually doing all day</h2>
+      <p>A lot, as it turns out. Pigeon social dynamics are surprisingly complex: pair bonds are often lifelong, they recognize individual human faces, and they can navigate home from 1,000 miles away using magnetic fields and infrasound.</p>
+    </div>
+  </article>
+
+  <div style="margin-bottom:0.75rem;">
+    <h2 style="font-size:0.8125rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-light);">Single post — micro</h2>
+  </div>
+
+  <article class="post-single post-micro" style="margin-bottom:2rem;">
+    <div class="post-content">
+      <p>The pigeon on the fire escape is back. She's brought a friend this time. They're both judging me through the window while I eat cereal.</p>
+    </div>
+    <footer class="post-meta post-meta-solo">
+      <time>May 3, 2026 · 8:42 AM</time>
+      <span class="post-categories">
+        <a href="#" class="post-category">pigeons</a>
+      </span>
+    </footer>
+  </article>
+
+  <div style="margin-bottom:0.75rem;">
+    <h2 style="font-size:0.8125rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-light);">Single post — photo</h2>
+  </div>
+
+  <article class="post-single post-photo" style="margin-bottom:2rem;">
+    <div class="post-photos">
+      <figure class="post-figure">
+        <div class="fake-photo" style="height:400px;">🐦</div>
+      </figure>
+    </div>
+    <div class="post-content">
+      <p>Morning light on the south-facing ledge. The iridescent neck feathers are something else at this angle.</p>
+    </div>
+    <footer class="post-meta post-meta-solo">
+      <time>May 2, 2026 · 7:15 AM</time>
+      <span class="post-categories">
+        <a href="#" class="post-category">pigeons</a>
+        <a href="#" class="post-category">photos</a>
+      </span>
+    </footer>
+  </article>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-name">Pigeon Town</p>
+    <nav class="footer-links">
+      <a href="#">Home</a>
+      <a href="#">Archive</a>
+      <a href="#">Mastodon</a>
+      <a href="#">RSS</a>
+    </nav>
+    <p class="footer-credit">Made with <a href="#">Micro.blog</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

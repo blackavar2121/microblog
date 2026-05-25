@@ -1,0 +1,43 @@
+{{ $hasTitle := and .Title (gt (len .Title) 0) }}
+{{ $hasImages := gt (len (.Resources.ByType "image")) 0 }}
+{{ $postClass := cond $hasImages "post-photo" (cond $hasTitle "post-article" "post-micro") }}
+
+<article class="post-card {{ $postClass }}">
+  {{ if $hasImages }}
+  <div class="post-image">
+    <a href="{{ .Permalink }}">
+      {{ range first 1 (.Resources.ByType "image") }}
+      <img src="{{ .RelPermalink }}" alt="{{ $.Title | default "" }}">
+      {{ end }}
+    </a>
+  </div>
+  {{ end }}
+
+  <div class="post-body">
+    {{ if $hasTitle }}
+    <h2 class="post-title"><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
+    {{ end }}
+
+    <div class="post-content">
+      {{ if $hasTitle }}
+        {{ .Summary }}
+      {{ else }}
+        {{ .Content }}
+      {{ end }}
+    </div>
+
+    <footer class="post-meta">
+      <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format "Jan 2, 2006" }}</time>
+      {{ with .Params.categories }}
+      <span class="post-categories">
+        {{ range . }}
+        <a href="{{ "/categories/" | absURL }}{{ . | urlize }}/" class="post-category">{{ . }}</a>
+        {{ end }}
+      </span>
+      {{ end }}
+      {{ if $hasTitle }}
+      <a href="{{ .Permalink }}" class="post-readmore">Read more →</a>
+      {{ end }}
+    </footer>
+  </div>
+</article>

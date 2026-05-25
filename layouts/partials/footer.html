@@ -1,0 +1,12 @@
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-name">{{ .Site.Title }}</p>
+    <nav class="footer-links">
+      <a href="{{ "/" | absURL }}">Home</a>
+      <a href="{{ "/archive/" | absURL }}">Archive</a>
+      {{ with .Site.Params.mastodon }}<a href="{{ . }}" rel="me">Mastodon</a>{{ end }}
+      <a href="{{ "/feed.xml" | absURL }}">RSS</a>
+    </nav>
+    <p class="footer-credit">Made with <a href="https://micro.blog">Micro.blog</a></p>
+  </div>
+</footer>

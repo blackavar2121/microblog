@@ -1,0 +1,50 @@
+{{ define "main" }}
+<div class="books-page">
+  <header class="list-header">
+    <h1 class="list-title">Books</h1>
+    {{ with .Site.Params.books_description }}
+    <p class="list-description">{{ . }}</p>
+    {{ end }}
+  </header>
+
+  {{ $reading  := where .Site.RegularPages "Params.book_status" "reading" }}
+  {{ $finished := where .Site.RegularPages "Params.book_status" "finished" }}
+  {{ $want     := where .Site.RegularPages "Params.book_status" "want" }}
+
+  {{ if $reading }}
+  <section class="bookshelf">
+    <h2 class="bookshelf-label">Currently Reading</h2>
+    <div class="books-feed">
+      {{ range $reading }}{{ partial "book-card.html" . }}{{ end }}
+    </div>
+  </section>
+  {{ end }}
+
+  {{ if $finished }}
+  <section class="bookshelf">
+    <h2 class="bookshelf-label">Read</h2>
+    <div class="books-feed">
+      {{ range $finished }}{{ partial "book-card.html" . }}{{ end }}
+    </div>
+  </section>
+  {{ end }}
+
+  {{ if $want }}
+  <section class="bookshelf">
+    <h2 class="bookshelf-label">Want to Read</h2>
+    <div class="books-feed">
+      {{ range $want }}{{ partial "book-card.html" . }}{{ end }}
+    </div>
+  </section>
+  {{ end }}
+
+  {{/* fallback: show all book posts if none have book_status set */}}
+  {{ if and (not $reading) (not $finished) (not $want) }}
+  <div class="books-feed">
+    {{ range .Paginator.Pages }}{{ partial "book-card.html" . }}{{ end }}
+  </div>
+  {{ template "_internal/pagination.html" . }}
+  {{ end }}
+
+</div>
+{{ end }}
