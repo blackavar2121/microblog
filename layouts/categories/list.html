@@ -1,3 +1,6 @@
 {{ define "main" }}
-{{ partial "category-router.html" . }}
+<div class="grid-1col" style="padding: 2rem">
+  <h1 class="serif-d">{{ .Title }}</h1>
+  <p class="mono dim">{{ len .Pages }} posts in this category</p>
+</div>
 {{ end }}
