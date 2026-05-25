@@ -1,8 +1,6 @@
-{{ $hasTitle := ne .Title "" }}
 {{ $hasImages := gt (len (.Resources.ByType "image")) 0 }}
-{{ $postClass := cond $hasImages "post-photo" (cond $hasTitle "post-article" "post-micro") }}
 
-<article class="post-card {{ $postClass }}">
+<article class="post-card {{ if $hasImages }}post-photo{{ else if .Title }}post-article{{ else }}post-micro{{ end }}">
   {{ if $hasImages }}
   <div class="post-image">
     <a href="{{ .Permalink }}">
@@ -14,12 +12,12 @@
   {{ end }}
 
   <div class="post-body">
-    {{ if $hasTitle }}
+    {{ if .Title }}
     <h2 class="post-title"><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
     {{ end }}
 
     <div class="post-content">
-      {{ if $hasTitle }}
+      {{ if .Title }}
         {{ .Summary }}
       {{ else }}
         {{ .Content }}
@@ -35,7 +33,7 @@
         {{ end }}
       </span>
       {{ end }}
-      {{ if $hasTitle }}
+      {{ if .Title }}
       <a href="{{ .Permalink }}" class="post-readmore">Read more →</a>
       {{ end }}
     </footer>

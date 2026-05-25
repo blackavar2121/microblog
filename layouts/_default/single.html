@@ -1,9 +1,7 @@
 {{ define "main" }}
-{{ $hasTitle := ne .Title "" }}
 {{ $hasImages := gt (len (.Resources.ByType "image")) 0 }}
-{{ $postClass := cond $hasImages "post-photo" (cond $hasTitle "post-article" "post-micro") }}
 
-<article class="post-single {{ $postClass }}">
+<article class="post-single {{ if $hasImages }}post-photo{{ else if .Title }}post-article{{ else }}post-micro{{ end }}">
 
   {{ if $hasImages }}
   <div class="post-photos">
@@ -15,7 +13,7 @@
   </div>
   {{ end }}
 
-  {{ if $hasTitle }}
+  {{ if .Title }}
   <header class="post-header">
     <h1 class="post-title">{{ .Title }}</h1>
     <div class="post-meta">
@@ -35,7 +33,7 @@
     {{ .Content }}
   </div>
 
-  {{ if not $hasTitle }}
+  {{ if not .Title }}
   <footer class="post-meta post-meta-solo">
     <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format "January 2, 2006 · 3:04 PM" }}</time>
     {{ with .Params.categories }}
