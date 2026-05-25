@@ -1,6 +1,12 @@
 {{ define "main" }}
+{{ $posts := where .Site.RegularPages "Section" "not in" (slice "photos" "books") }}
+{{ $games := where $posts "Params.categories" "intersect" (slice "games") }}
+{{ $pigeons := where $posts "Params.categories" "intersect" (slice "pigeons") }}
+{{ $posts = complement $games $posts }}
+{{ $posts = complement $pigeons $posts }}
+{{ $paginator := .Paginate $posts }}
 <div class="feed-container">
-  {{ range .Paginator.Pages }}
+  {{ range $paginator.Pages }}
     {{ partial "post-card.html" . }}
   {{ end }}
   {{ template "_internal/pagination.html" . }}
