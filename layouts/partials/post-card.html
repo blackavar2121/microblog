@@ -1,4 +1,4 @@
-{{ $hasTitle := and .Title (gt (len .Title) 0) }}
+{{ $hasTitle := ne .Title "" }}
 {{ $hasImages := gt (len (.Resources.ByType "image")) 0 }}
 {{ $postClass := cond $hasImages "post-photo" (cond $hasTitle "post-article" "post-micro") }}
 
