@@ -9,3 +9,18 @@ items:
   - label: Watching
     value: Pigeons
     sub: always pigeons
+
+# Social / elsewhere links — shown in the Subscribe section of the Now panel.
+social:
+  - label: Bluesky
+    url: https://bsky.app/profile/blackavar.bsky.social
+    handle: "@blackavar.bsky.social"
+  - label: Mastodon
+    url: https://twit.social/@Blackavar
+    handle: "@Blackavar@twit.social"
+  - label: Threads
+    url: https://www.threads.net/@blackavar
+    handle: "@blackavar"
+  - label: Flickr
+    url: https://www.flickr.com/photos/blackavar
+    handle: "blackavar"
