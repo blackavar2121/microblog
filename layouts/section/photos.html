@@ -1,0 +1,31 @@
+{{ define "main" }}
+<div class="grid-1col">
+  {{ partial "page-header.html" (dict "eyebrow" "Photographs" "title" "Photos." "meta" (printf "%d images" (len .Pages))) }}
+
+  {{/* Lead photo + grid. micro.blog photo posts typically have one image in .Content. */}}
+  {{ $pages := .Paginator.Pages }}
+  {{ if $pages }}
+    {{ $lead := index $pages 0 }}
+    {{ $rest := after 1 $pages }}
+
+    <div class="photo-grid">
+      <figure class="photo-grid__lead">
+        {{ partial "photo-img.html" $lead }}
+        <figcaption>
+          <div class="eyebrow eyebrow--photo mono small">Latest · {{ $lead.Date.Format "Jan 02, 2006" }}</div>
+          <div class="serif-d photo-grid__caption">{{ $lead.Title | default ($lead.Content | plainify | truncate 80) }}</div>
+        </figcaption>
+      </figure>
+
+      <div class="photo-grid__tail">
+        {{ range first 6 $rest }}
+          <figure>
+            {{ partial "photo-img.html" . }}
+            <figcaption class="mono small dim">{{ .Date.Format "Jan 02" }}</figcaption>
+          </figure>
+        {{ end }}
+      </div>
+    </div>
+  {{ end }}
+</div>
+{{ end }}

@@ -1,12 +1,12 @@
 <footer class="site-footer">
-  <div class="footer-inner">
-    <p class="footer-name">{{ .Site.Title }}</p>
-    <nav class="footer-links">
-      <a href="{{ "/" | absURL }}">Home</a>
-      <a href="{{ "/archive/" | absURL }}">Archive</a>
-      {{ with .Site.Params.mastodon }}<a href="{{ . }}" rel="me">Mastodon</a>{{ end }}
-      <a href="{{ "/feed.xml" | absURL }}">RSS</a>
+  <div class="site-footer__inner">
+    <span class="brand__name brand__name--small">{{ .Site.Title }}</span>
+    <nav>
+      <a href="{{ "/" | relURL }}">Home</a>
+      <a href="{{ "/archive/" | relURL }}">Archive</a>
+      <a href="{{ "feed.xml" | absURL }}">RSS</a>
+      <a href="{{ "feed.json" | absURL }}">JSON</a>
     </nav>
-    <p class="footer-credit">Made with <a href="https://micro.blog">Micro.blog</a></p>
+    <span class="mono small dim">Made with <a href="https://micro.blog">Micro.blog</a></span>
   </div>
 </footer>

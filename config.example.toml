@@ -1,0 +1,39 @@
+# Example site config for the Bricolage Sky theme.
+# Copy the relevant bits into your micro.blog plug-in config or Hugo config.toml.
+
+baseURL = "https://bricolage.micro.blog/"
+languageCode = "en-us"
+title = "Bricolage"
+theme = "bricolage-sky"
+paginate = 20
+
+[params]
+  tagline = "Making something out of sticks and stones."
+  about   = "Short posts and longer essays. A field notebook for things the internet keeps trying to forget."
+  # Optional: rows added to the Subscribe block in the Now panel
+  [[params.elsewhere]]
+    label  = "Mastodon"
+    handle = "@mjelliott@micro.blog"
+    url    = "https://micro.blog/mjelliott"
+
+[menu]
+  [[menu.main]]
+    name = "Home"
+    url = "/"
+    weight = 1
+  [[menu.main]]
+    name = "Photos"
+    url = "/photos/"
+    weight = 2
+  [[menu.main]]
+    name = "Books"
+    url = "/books/"
+    weight = 3
+  [[menu.main]]
+    name = "Games"
+    url = "/categories/games/"
+    weight = 4
+  [[menu.main]]
+    name = "Pigeons"
+    url = "/categories/pigeons/"
+    weight = 5

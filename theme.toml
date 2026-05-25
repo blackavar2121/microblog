@@ -1,11 +1,12 @@
-name = "Pigeon Town"
+name = "Bricolage Sky"
 license = "MIT"
 licenselink = "https://opensource.org/licenses/MIT"
-description = "A warm, pigeon-inspired Micro.blog theme. Supports short posts, long form articles, photos, books, games, and pigeon pics."
-tags = ["blog", "minimal", "microblog", "photos"]
-features = ["blog", "photos", "books"]
-min_version = "0.91.0"
+description = "A typography-first, iridescent-accented theme for micro.blog. Pigeon palette, accessible type swap, light + dark."
+homepage = "https://bricolage.micro.blog/"
+tags = ["micro.blog", "minimal", "accessible", "personal"]
+features = ["dark mode", "type system swap", "category-aware layouts"]
+min_version = "0.91.2"
 
 [author]
-  name = ""
-  homepage = ""
+  name = "Mike Elliott"
+  homepage = "https://bricolage.micro.blog/"

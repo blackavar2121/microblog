@@ -1,0 +1,29 @@
+<aside class="sidebar">
+  <section>
+    <div class="eyebrow">About</div>
+    <p class="serif sidebar__about">{{ .Site.Params.about | default "Short posts and longer essays. A field notebook for things the internet keeps trying to forget." }}</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">Tags</div>
+    <div class="tag-cloud">
+      {{ range (.Site.Taxonomies.categories.ByCount | first 12) }}
+        <a href="{{ "/categories/" | relURL }}{{ .Name | urlize }}/" class="tag">{{ .Name }}</a>
+      {{ end }}
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Archive</div>
+    <ul class="archive-list mono">
+      {{ $byYear := dict }}
+      {{ range where .Site.RegularPages "Type" "post" }}
+        {{ $y := .Date.Format "2006" }}
+        {{ $byYear = merge $byYear (dict $y (add (index $byYear $y | default 0) 1)) }}
+      {{ end }}
+      {{ range $year, $count := $byYear }}
+        <li><span>{{ $year }}</span><span class="dim">{{ $count }}</span></li>
+      {{ end }}
+    </ul>
+  </section>
+</aside>

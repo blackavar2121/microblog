@@ -1,0 +1,11 @@
+# "Now" panel content. Update this when you start a new book / game / etc.
+items:
+  - label: Reading
+    value: The Overstory
+    sub: by Richard Powers · 62%
+  - label: Playing
+    value: Outer Wilds
+    sub: PC · 14 hours in
+  - label: Watching
+    value: Pigeons
+    sub: always pigeons

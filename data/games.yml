@@ -1,0 +1,21 @@
+# Games journal. The Games category page reads from here for the header
+# (now playing, backlog, finished) and shows chronological category posts below.
+now_playing:
+  - title: Outer Wilds
+    platform: PC
+    hours: 14
+    started: 2026-05-12
+    note: Two loops away from finishing the Quantum Moon, I think.
+
+backlog:
+  - { title: Pentiment,                   platform: PC }
+  - { title: Citizen Sleeper 2,           platform: PC }
+  - { title: Tunic,                       platform: Switch }
+  - { title: Disco Elysium,               platform: PC }
+  - { title: Return of the Obra Dinn,     platform: PC }
+
+finished:
+  - { title: SOMA,                  platform: PC,     finished: 2026-05-22, rating: 5 }
+  - { title: Inscryption,           platform: PC,     finished: 2026-04-30, rating: 5 }
+  - { title: A Short Hike,          platform: Switch, finished: 2026-04-12, rating: 4 }
+  - { title: Chants of Sennaar,     platform: PC,     finished: 2026-03-15, rating: 4 }

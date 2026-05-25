@@ -1,14 +1,35 @@
 {{ define "main" }}
-{{ $posts := where .Site.Pages.ByDate.Reverse "Type" "post" }}
-{{ $games := where $posts "Params.categories" "intersect" (slice "games") }}
-{{ $pigeons := where $posts "Params.categories" "intersect" (slice "pigeons") }}
-{{ $posts = complement $games $posts }}
-{{ $posts = complement $pigeons $posts }}
-{{ $paginator := .Paginate $posts }}
-<div class="feed-container">
-  {{ range $paginator.Pages }}
-    {{ partial "post-card.html" . }}
-  {{ end }}
-  {{ template "_internal/pagination.html" . }}
+<div class="grid-3col">
+  {{ partial "sidebar.html" . }}
+
+  <section class="feed">
+    {{/* Pinned longform — front-matter `featured: true` OR latest from Longform category */}}
+    {{ $featured := first 1 (where .Site.RegularPages ".Params.featured" true) }}
+    {{ if not $featured }}
+      {{ $featured = first 1 (where .Site.RegularPages "Params.categories" "intersect" (slice "Longform")) }}
+    {{ end }}
+    {{ range $featured }}
+      {{ partial "post-card.html" . }}
+    {{ end }}
+
+    <div class="eyebrow eyebrow--feed">Recent · short posts</div>
+
+    {{/* Microposts — exclude the featured one and any explicit longform */}}
+    {{ $shorts := where .Site.RegularPages "Type" "post" }}
+    {{ $shorts = where $shorts ".Params.featured" "ne" true }}
+    {{ range first 20 $shorts }}
+      {{ partial "post-card.html" . }}
+    {{ end }}
+
+    {{ if gt .Paginator.TotalPages 1 }}
+      <nav class="pager mono">
+        {{ if .Paginator.HasPrev }}<a href="{{ .Paginator.Prev.URL }}">← Newer</a>{{ end }}
+        <span class="dim">{{ .Paginator.PageNumber }} / {{ .Paginator.TotalPages }}</span>
+        {{ if .Paginator.HasNext }}<a href="{{ .Paginator.Next.URL }}">Older →</a>{{ end }}
+      </nav>
+    {{ end }}
+  </section>
+
+  {{ partial "now.html" . }}
 </div>
 {{ end }}

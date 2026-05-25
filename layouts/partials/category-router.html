@@ -1,0 +1,11 @@
+{{/* Routes specific categories to specific layouts. */}}
+{{ $term := .Title | lower }}
+{{ if eq $term "games" }}
+  {{ partial "category-games.html" . }}
+{{ else if eq $term "pigeons" }}
+  {{ partial "category-pigeons.html" . }}
+{{ else if eq $term "longform" }}
+  {{ partial "category-longform.html" . }}
+{{ else }}
+  {{ partial "category-default.html" . }}
+{{ end }}

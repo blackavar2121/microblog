@@ -1,14 +1,19 @@
 {{ define "main" }}
-<div class="list-page">
-  <header class="list-header">
-    <h1 class="list-title">{{ .Title }}</h1>
-    {{ with .Description }}<p class="list-description">{{ . }}</p>{{ end }}
-  </header>
-  <div class="feed-container">
+<div class="grid-1col">
+  {{ partial "page-header.html" (dict "eyebrow" .Section "title" .Title "meta" (printf "%d posts" (len .Pages))) }}
+
+  <ul class="post-list">
     {{ range .Paginator.Pages }}
-      {{ partial "post-card.html" . }}
+      <li>{{ partial "post-card.html" . }}</li>
     {{ end }}
-  </div>
-  {{ template "_internal/pagination.html" . }}
+  </ul>
+
+  {{ if gt .Paginator.TotalPages 1 }}
+    <nav class="pager mono">
+      {{ if .Paginator.HasPrev }}<a href="{{ .Paginator.Prev.URL }}">← Newer</a>{{ end }}
+      <span class="dim">{{ .Paginator.PageNumber }} / {{ .Paginator.TotalPages }}</span>
+      {{ if .Paginator.HasNext }}<a href="{{ .Paginator.Next.URL }}">Older →</a>{{ end }}
+    </nav>
+  {{ end }}
 </div>
 {{ end }}

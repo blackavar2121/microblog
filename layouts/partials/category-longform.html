@@ -1,0 +1,16 @@
+<div class="grid-1col">
+  {{ partial "page-header.html" (dict "eyebrow" "Essays" "title" "Longform." "meta" (printf "%d essays" (len .Pages))) }}
+
+  <ul class="essay-list">
+    {{ range .Paginator.Pages }}
+      <li class="essay-row">
+        <time class="mono small dim">{{ .Date.Format "Jan 02, 2006" }}</time>
+        <div>
+          <h3 class="serif-d essay-row__title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+          {{ with .Summary }}<p class="serif italic dim">{{ . | plainify | truncate 200 }}</p>{{ end }}
+        </div>
+        <span class="mono small dim">{{ .ReadingTime }} min</span>
+      </li>
+    {{ end }}
+  </ul>
+</div>

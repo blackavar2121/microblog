@@ -1,0 +1,9 @@
+{{/* Extract the first <img src> from .Content (micro.blog photo posts inline a single image). */}}
+{{ $first := index (findRE `<img[^>]+src=["']([^"']+)["']` .Content 1) 0 }}
+{{ $src := index (findRE `src=["']([^"']+)["']` ($first | default "") 1) 0 | default "" }}
+{{ $src = replaceRE `^src=["']|["']$` "" ($src | default "") }}
+{{ if $src }}
+  <a href="{{ .RelPermalink }}"><img src="{{ $src }}" alt="{{ .Title }}" loading="lazy" /></a>
+{{ else }}
+  <a href="{{ .RelPermalink }}" class="ph" aria-label="photo"></a>
+{{ end }}

@@ -1,50 +1,27 @@
 {{ define "main" }}
-{{ $hasImages := gt (len (.Resources.ByType "image")) 0 }}
-
-<article class="post-single {{ if $hasImages }}post-photo{{ else if .Title }}post-article{{ else }}post-micro{{ end }}">
-
-  {{ if $hasImages }}
-  <div class="post-photos">
-    {{ range .Resources.ByType "image" }}
-    <figure class="post-figure">
-      <img src="{{ .RelPermalink }}" alt="">
-    </figure>
-    {{ end }}
-  </div>
-  {{ end }}
-
-  {{ if .Title }}
-  <header class="post-header">
-    <h1 class="post-title">{{ .Title }}</h1>
-    <div class="post-meta">
-      <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format "January 2, 2006" }}</time>
-      {{ with .Params.categories }}
-      <span class="post-categories">
-        {{ range . }}
-        <a href="{{ "/categories/" | absURL }}{{ . | urlize }}/" class="post-category">{{ . }}</a>
+<div class="grid-1col">
+  <article class="prose">
+    <header class="prose__header">
+      <div class="prose__meta mono small dim">
+        <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 02, 2006" }}</time>
+        {{ with .ReadingTime }} · {{ . }} min read{{ end }}
+        {{ range .Params.categories }}
+          · <a href="{{ "/categories/" | relURL }}{{ . | urlize }}/">{{ . }}</a>
         {{ end }}
-      </span>
-      {{ end }}
+      </div>
+      {{ if .Title }}<h1 class="serif-d prose__title">{{ .Title }}</h1>{{ end }}
+    </header>
+
+    <div class="prose__body serif">
+      {{ .Content }}
     </div>
-  </header>
-  {{ end }}
 
-  <div class="post-content">
-    {{ .Content }}
-  </div>
+    <footer class="prose__footer mono small">
+      <a href="javascript:history.back()">← Back</a>
+      <span class="dim">{{ .Permalink }}</span>
+    </footer>
+  </article>
 
-  {{ if not .Title }}
-  <footer class="post-meta post-meta-solo">
-    <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format "January 2, 2006 · 3:04 PM" }}</time>
-    {{ with .Params.categories }}
-    <span class="post-categories">
-      {{ range . }}
-      <a href="{{ "/categories/" | absURL }}{{ . | urlize }}/" class="post-category">{{ . }}</a>
-      {{ end }}
-    </span>
-    {{ end }}
-  </footer>
-  {{ end }}
-
-</article>
+  {{/* micro.blog conversation/replies are injected by the platform if enabled */}}
+</div>
 {{ end }}

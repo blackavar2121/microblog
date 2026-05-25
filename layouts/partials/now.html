@@ -1,0 +1,24 @@
+<aside class="now-panel">
+  <div class="eyebrow eyebrow--leader">Now</div>
+
+  <div class="now-stack">
+    {{ range .Site.Data.now.items }}
+      <div class="now-item">
+        <div class="eyebrow eyebrow--small">{{ .label }}</div>
+        <div class="serif-d now-item__value">{{ .value }}</div>
+        {{ with .sub }}<div class="serif italic dim small">{{ . }}</div>{{ end }}
+      </div>
+    {{ end }}
+  </div>
+
+  <hr class="rule" />
+
+  <div class="eyebrow">Subscribe</div>
+  <ul class="sub-list mono">
+    <li>RSS · <a href="{{ "feed.xml" | absURL }}">/feed.xml</a></li>
+    <li>JSON · <a href="{{ "feed.json" | absURL }}">/feed.json</a></li>
+    {{ with .Site.Params.elsewhere }}
+      {{ range . }}<li>{{ .label }} · <a href="{{ .url }}">{{ .handle }}</a></li>{{ end }}
+    {{ end }}
+  </ul>
+</aside>

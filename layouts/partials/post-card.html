@@ -1,41 +1,28 @@
-{{ $hasImages := gt (len (.Resources.ByType "image")) 0 }}
-
-<article class="post-card {{ if $hasImages }}post-photo{{ else if .Title }}post-article{{ else }}post-micro{{ end }}">
-  {{ if $hasImages }}
-  <div class="post-image">
-    <a href="{{ .Permalink }}">
-      {{ range first 1 (.Resources.ByType "image") }}
-      <img src="{{ .RelPermalink }}" alt="{{ $.Title | default "" }}">
-      {{ end }}
-    </a>
-  </div>
-  {{ end }}
-
-  <div class="post-body">
-    {{ if .Title }}
-    <h2 class="post-title"><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
-    {{ end }}
-
-    <div class="post-content">
-      {{ if .Title }}
-        {{ .Summary }}
-      {{ else }}
-        {{ .Content }}
-      {{ end }}
-    </div>
-
-    <footer class="post-meta">
-      <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format "Jan 2, 2006" }}</time>
-      {{ with .Params.categories }}
-      <span class="post-categories">
-        {{ range . }}
-        <a href="{{ "/categories/" | absURL }}{{ . | urlize }}/" class="post-category">{{ . }}</a>
+{{/* Renders a short or longform post in the feed. Pass the page as . */}}
+<article class="post-card{{ if .Params.featured }} post-card--featured{{ end }}">
+  {{ if .Title }}
+    <header class="post-card__header">
+      <div class="post-card__meta">
+        {{ if .Params.featured }}
+          <span class="badge badge--iri mono">Pinned · Essay</span>
         {{ end }}
-      </span>
-      {{ end }}
-      {{ if .Title }}
-      <a href="{{ .Permalink }}" class="post-readmore">Read more →</a>
-      {{ end }}
-    </footer>
-  </div>
+        <time class="mono small dim" datetime="{{ .Date.Format "2006-01-02" }}">
+          {{ .Date.Format "Jan 02, 2006" }}
+          {{ with .ReadingTime }} · {{ . }} min{{ end }}
+        </time>
+      </div>
+      <h2 class="serif-d post-card__title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+      {{ with .Summary }}<p class="serif post-card__dek">{{ . | plainify | truncate 220 }}</p>{{ end }}
+      <a href="{{ .RelPermalink }}" class="mono link-arrow">Read essay →</a>
+    </header>
+  {{ else }}
+    <div class="micropost">
+      <time class="mono small dim micropost__time" datetime="{{ .Date.Format "2006-01-02T15:04" }}">
+        {{ .Date.Format "Jan 02" }}<br><span class="dim">{{ .Date.Format "15:04" }}</span>
+      </time>
+      <div class="micropost__body serif">
+        {{ .Content }}
+      </div>
+    </div>
+  {{ end }}
 </article>

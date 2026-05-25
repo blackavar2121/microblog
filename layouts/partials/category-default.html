@@ -1,0 +1,6 @@
+<div class="grid-1col">
+  {{ partial "page-header.html" (dict "eyebrow" "Category" "title" (printf "%s." .Title) "meta" (printf "%d posts" (len .Pages))) }}
+  <ul class="post-list">
+    {{ range .Paginator.Pages }}<li>{{ partial "post-card.html" . }}</li>{{ end }}
+  </ul>
+</div>

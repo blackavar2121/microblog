@@ -1,0 +1,9 @@
+# Named-pigeon catalogue. The Pigeons category page shows this above your
+# chronological pigeon posts. Each entry can reference an image you've uploaded.
+birds:
+  - { name: Mottle,    spot: fire escape,   date: 2026-05-23, note: "White-flecked, very brave.",                 photo: "" }
+  - { name: Two-Toes,  spot: bakery awning, date: 2026-05-19, note: "Missing the right outer toe.",                photo: "" }
+  - { name: The Mayor, spot: town square,   date: 2026-05-17, note: "Massive. Commands a flock of nine.",          photo: "" }
+  - { name: Iris,      spot: rooftop,       date: 2026-05-15, note: "The greenest neck I have ever seen.",         photo: "" }
+  - { name: Pip,       spot: cafe terrace,  date: 2026-05-12, note: "Tiny. Eats only sesame seeds.",               photo: "" }
+  - { name: Smoke,     spot: park bench,    date: 2026-05-08, note: "Almost entirely charcoal.",                   photo: "" }

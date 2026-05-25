@@ -1,0 +1,6 @@
+{{/* Section-page header: eyebrow + iri rule + huge serif title. Pass dict "eyebrow" "Library" "title" "Books." */}}
+<header class="page-header">
+  <div class="eyebrow eyebrow--leader">{{ .eyebrow }}</div>
+  <h1 class="serif-d page-header__title">{{ .title }}</h1>
+  {{ with .meta }}<p class="mono small dim page-header__meta">{{ . | safeHTML }}</p>{{ end }}
+</header>

@@ -1,0 +1,49 @@
+<div class="grid-1col">
+  <header class="pigeons-header">
+    <div>
+      <div class="eyebrow eyebrow--leader">Catalogue</div>
+      <h1 class="serif-d page-header__title">Pigeons.</h1>
+    </div>
+    <div class="mono small dim text-right">
+      {{ len .Site.Data.pigeons.birds }} catalogued · ongoing
+    </div>
+  </header>
+
+  {{ $birds := .Site.Data.pigeons.birds }}
+  {{ if $birds }}
+    {{ $featured := index $birds 0 }}
+    <div class="pigeons-detail">
+      <section>
+        <div class="ph iri pigeons-detail__photo" data-label="pigeon · {{ $featured.name | lower }}"></div>
+        <h2 class="serif-d pigeons-detail__name">{{ $featured.name }}</h2>
+        <p class="serif italic dim">Last spotted at the {{ $featured.spot }}, on {{ $featured.date }}.</p>
+        <p class="serif pigeons-detail__note">{{ $featured.note }}</p>
+      </section>
+      <section>
+        <div class="eyebrow">The roster</div>
+        <ul class="roster">
+          {{ range $i, $b := $birds }}
+            <li>
+              <span class="mono small dim">{{ printf "%02d" (add $i 1) }}</span>
+              <div class="ph roster__photo" aria-hidden="true"></div>
+              <div>
+                <div class="serif-d roster__name">{{ .name }}</div>
+                <div class="mono small dim">{{ .spot }}</div>
+              </div>
+              <span class="mono small dim">{{ .date }}</span>
+            </li>
+          {{ end }}
+        </ul>
+      </section>
+    </div>
+  {{ end }}
+
+  {{/* Chronological pigeon posts from the category */}}
+  {{ if gt (len .Pages) 0 }}
+    <hr class="rule" />
+    <div class="eyebrow eyebrow--leader">Recent pigeon sightings</div>
+    <ul class="post-list">
+      {{ range first 6 .Pages }}<li>{{ partial "post-card.html" . }}</li>{{ end }}
+    </ul>
+  {{ end }}
+</div>

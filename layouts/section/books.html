@@ -1,0 +1,61 @@
+{{ define "main" }}
+<div class="grid-1col">
+  {{ partial "page-header.html" (dict "eyebrow" "Library" "title" "Books." "meta" "currently reading & finished") }}
+
+  {{/* micro.blog Bookshelves exposes data under .Site.Data.bookshelves or similar — adjust per your install. */}}
+  {{ $shelves := .Site.Data.bookshelves | default dict }}
+
+  <section>
+    <div class="eyebrow">Currently reading</div>
+    <div class="book-grid book-grid--reading">
+      {{ range $shelves.reading | default slice }}
+        <article class="book-card">
+          {{ if .cover_url }}<img src="{{ .cover_url }}" alt="cover" class="book-card__cover" />{{ else }}<div class="ph book-card__cover" data-label="cover"></div>{{ end }}
+          <div>
+            <h3 class="serif-d book-card__title">{{ .title }}</h3>
+            <p class="serif italic dim book-card__author">{{ .author }}</p>
+            {{ with .progress }}
+              <div class="progress"><div class="progress__bar" style="width: {{ mul . 100 }}%"></div></div>
+              <p class="mono small dim book-card__progress"><span>Started {{ $.started }}</span><span>{{ mul . 100 }}%</span></p>
+            {{ end }}
+          </div>
+        </article>
+      {{ else }}
+        <p class="serif italic dim">No books currently reading. (Configure your micro.blog Bookshelves to populate this list.)</p>
+      {{ end }}
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Finished — most recent first</div>
+    <table class="books-table">
+      <thead>
+        <tr class="mono small dim">
+          <th>Date</th><th>Title</th><th>Author</th><th class="text-right">Rating</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{ range $shelves.finished | default slice }}
+          <tr>
+            <td class="mono small dim">{{ .finished }}</td>
+            <td class="serif-d">{{ .title }}</td>
+            <td class="serif italic dim">{{ .author }}</td>
+            <td class="text-right stars">
+              {{ range seq .rating }}★{{ end }}{{ range seq (sub 5 .rating) }}<span class="dim">★</span>{{ end }}
+            </td>
+          </tr>
+        {{ end }}
+      </tbody>
+    </table>
+  </section>
+
+  {{/* Fall back to listing posts in /books/ if no shelves data */}}
+  {{ if and (not $shelves.reading) (not $shelves.finished) }}
+    {{ if gt (len .Pages) 0 }}
+      <ul class="post-list">
+        {{ range .Paginator.Pages }}<li>{{ partial "post-card.html" . }}</li>{{ end }}
+      </ul>
+    {{ end }}
+  {{ end }}
+</div>
+{{ end }}
