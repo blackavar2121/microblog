@@ -1,5 +1,5 @@
 {{ define "main" }}
-{{ $posts := where .Site.RegularPages "Section" "not in" (slice "photos" "books") }}
+{{ $posts := where .Site.Pages.ByDate.Reverse "Type" "post" }}
 {{ $games := where $posts "Params.categories" "intersect" (slice "games") }}
 {{ $pigeons := where $posts "Params.categories" "intersect" (slice "pigeons") }}
 {{ $posts = complement $games $posts }}
