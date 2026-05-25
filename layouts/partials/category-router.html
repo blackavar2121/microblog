@@ -4,6 +4,8 @@
   {{ partial "category-games.html" . }}
 {{ else if eq $term "pigeons" }}
   {{ partial "category-pigeons.html" . }}
+{{ else if eq $term "books" }}
+  {{ partial "category-books.html" . }}
 {{ else if eq $term "longform" }}
   {{ partial "category-longform.html" . }}
 {{ else }}
