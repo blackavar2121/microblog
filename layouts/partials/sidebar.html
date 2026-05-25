@@ -16,13 +16,10 @@
   <section>
     <div class="eyebrow">Archive</div>
     <ul class="archive-list mono">
-      {{ $byYear := dict }}
-      {{ range where .Site.RegularPages "Type" "post" }}
-        {{ $y := .Date.Format "2006" }}
-        {{ $byYear = merge $byYear (dict $y (add (index $byYear $y | default 0) 1)) }}
-      {{ end }}
-      {{ range $year, $count := $byYear }}
-        <li><span>{{ $year }}</span><span class="dim">{{ $count }}</span></li>
+      {{/* GroupByDate "2006" groups by year, newest first */}}
+      {{ $posts := where .Site.RegularPages "Type" "post" }}
+      {{ range $posts.GroupByDate "2006" }}
+        <li><span>{{ .Key }}</span><span class="dim">{{ len .Pages }}</span></li>
       {{ end }}
     </ul>
   </section>

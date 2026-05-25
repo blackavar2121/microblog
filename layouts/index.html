@@ -8,24 +8,34 @@
     {{ if not $featured }}
       {{ $featured = first 1 (where .Site.RegularPages "Params.categories" "intersect" (slice "Longform")) }}
     {{ end }}
+
+    {{/* Track the featured permalink so we can exclude it from the feed below */}}
+    {{ $featuredPermalink := "" }}
     {{ range $featured }}
+      {{ $featuredPermalink = .Permalink }}
       {{ partial "post-card.html" . }}
     {{ end }}
 
     <div class="eyebrow eyebrow--feed">Recent · short posts</div>
 
-    {{/* Microposts — exclude the featured one and any explicit longform */}}
+    {{/* Feed — all posts, minus the featured one */}}
     {{ $shorts := where .Site.RegularPages "Type" "post" }}
     {{ $shorts = where $shorts ".Params.featured" "ne" true }}
-    {{ range first 20 $shorts }}
+    {{ if $featuredPermalink }}
+      {{ $shorts = where $shorts "Permalink" "ne" $featuredPermalink }}
+    {{ end }}
+
+    {{/* Use .Paginate so the paginator is wired to this filtered collection */}}
+    {{ $paginator := .Paginate $shorts }}
+    {{ range $paginator.Pages }}
       {{ partial "post-card.html" . }}
     {{ end }}
 
-    {{ if gt .Paginator.TotalPages 1 }}
+    {{ if gt $paginator.TotalPages 1 }}
       <nav class="pager mono">
-        {{ if .Paginator.HasPrev }}<a href="{{ .Paginator.Prev.URL }}">← Newer</a>{{ end }}
-        <span class="dim">{{ .Paginator.PageNumber }} / {{ .Paginator.TotalPages }}</span>
-        {{ if .Paginator.HasNext }}<a href="{{ .Paginator.Next.URL }}">Older →</a>{{ end }}
+        {{ if $paginator.HasPrev }}<a href="{{ $paginator.Prev.URL }}">← Newer</a>{{ end }}
+        <span class="dim">{{ $paginator.PageNumber }} / {{ $paginator.TotalPages }}</span>
+        {{ if $paginator.HasNext }}<a href="{{ $paginator.Next.URL }}">Older →</a>{{ end }}
       </nav>
     {{ end }}
   </section>
