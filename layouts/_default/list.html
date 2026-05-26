@@ -5,7 +5,11 @@
 {{ else }}
   {{/* Generic list pages (sections, etc.) */}}
   <div class="grid-1col">
-    {{ partial "page-header.html" (dict "eyebrow" .Section "title" .Title "meta" (printf "%d posts" (len .Pages))) }}
+    <header class="page-header">
+      <div class="eyebrow eyebrow--leader">{{ .Section }}</div>
+      <h1 class="serif-d page-header__title">{{ .Title }}</h1>
+      <p class="mono small dim page-header__meta">{{ len .Pages }} posts</p>
+    </header>
     <ul class="post-list">
       {{ range .Paginator.Pages }}
         <li>{{ partial "post-card.html" . }}</li>
