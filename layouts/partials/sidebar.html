@@ -4,19 +4,33 @@
     <p class="serif sidebar__about">{{ .Site.Params.about | default "Short posts and longer essays. A field notebook for things the internet keeps trying to forget." }}</p>
   </section>
 
+  {{/* Latest post from each category that has posts */}}
+  {{ $cats := .Site.Taxonomies.categories }}
+  {{ if $cats }}
   <section>
-    <div class="eyebrow">Tags</div>
-    <div class="tag-cloud">
-      {{ range (.Site.Taxonomies.categories.ByCount | first 12) }}
-        <a href="{{ "/categories/" | relURL }}{{ .Name | urlize }}/" class="tag">{{ .Name }}</a>
+    <div class="eyebrow">By Category</div>
+    <ul class="sidebar-cats">
+      {{ range ($cats.ByCount | first 6) }}
+        {{ $catName := .Name }}
+        {{ $latest := first 1 .Pages }}
+        {{ if $latest }}
+          {{ range $latest }}
+          <li class="sidebar-cat">
+            <a href="{{ "/categories/" | relURL }}{{ $catName | urlize }}/" class="mono small dim sidebar-cat__label">{{ $catName }}</a>
+            <a href="{{ .RelPermalink }}" class="serif sidebar-cat__title">
+              {{ if .Title }}{{ .Title }}{{ else }}{{ .Content | plainify | truncate 80 }}{{ end }}
+            </a>
+          </li>
+          {{ end }}
+        {{ end }}
       {{ end }}
-    </div>
+    </ul>
   </section>
+  {{ end }}
 
   <section>
     <div class="eyebrow">Archive</div>
     <ul class="archive-list mono">
-      {{/* GroupByDate "2006" groups by year, newest first */}}
       {{ $posts := where .Site.RegularPages "Type" "post" }}
       {{ range $posts.GroupByDate "2006" }}
         <li><span>{{ .Key }}</span><span class="dim">{{ len .Pages }}</span></li>
