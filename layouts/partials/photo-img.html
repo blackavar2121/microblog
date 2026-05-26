@@ -1,7 +1,14 @@
-{{/* Extract the first <img src> from .Content (micro.blog photo posts inline a single image). */}}
-{{ $first := index (findRE `<img[^>]+src=["']([^"']+)["']` .Content 1) 0 }}
-{{ $src := index (findRE `src=["']([^"']+)["']` ($first | default "") 1) 0 | default "" }}
-{{ $src = replaceRE `^src=["']|["']$` "" ($src | default "") }}
+{{/* micro.blog stores images in .Params.photos as an array of objects with a .url field.
+     Falls back to extracting the first <img src> from .Content for older posts. */}}
+{{ $src := "" }}
+{{ with index .Params.photos 0 }}
+  {{ $src = .url }}
+{{ end }}
+{{ if not $src }}
+  {{/* fallback: parse first img src from content */}}
+  {{ $first := index (findRE `src=["']([^"']+)["']` .Content 1) 0 | default "" }}
+  {{ $src = replaceRE `^src=["']|["']$` "" $first }}
+{{ end }}
 {{ if $src }}
   <a href="{{ .RelPermalink }}"><img src="{{ $src }}" alt="{{ .Title }}" loading="lazy" /></a>
 {{ else }}

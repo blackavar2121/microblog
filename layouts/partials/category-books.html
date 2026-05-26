@@ -23,7 +23,7 @@
               {{ with .progress }}
                 <div class="progress"><div class="progress__bar" style="width: {{ mul . 100 }}%"></div></div>
                 <p class="mono small dim book-card__progress">
-                  <span>Started {{ $.started }}</span><span>{{ mul . 100 }}%</span>
+                  <span>Started {{ $.started }}</span><span>{{ mul . 100 | printf "%.0f" }}%</span>
                 </p>
               {{ end }}
             </div>
