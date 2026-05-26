@@ -1,19 +1,23 @@
 {{ define "main" }}
-<div class="grid-1col">
-  {{ partial "page-header.html" (dict "eyebrow" .Section "title" .Title "meta" (printf "%d posts" (len .Pages))) }}
-
-  <ul class="post-list">
-    {{ range .Paginator.Pages }}
-      <li>{{ partial "post-card.html" . }}</li>
+{{ if eq .Kind "term" }}
+  {{/* Taxonomy term pages (e.g. /categories/video-games/) — route through category layouts */}}
+  {{ partial "category-router.html" . }}
+{{ else }}
+  {{/* Generic list pages (sections, etc.) */}}
+  <div class="grid-1col">
+    {{ partial "page-header.html" (dict "eyebrow" .Section "title" .Title "meta" (printf "%d posts" (len .Pages))) }}
+    <ul class="post-list">
+      {{ range .Paginator.Pages }}
+        <li>{{ partial "post-card.html" . }}</li>
+      {{ end }}
+    </ul>
+    {{ if gt .Paginator.TotalPages 1 }}
+      <nav class="pager mono">
+        {{ if .Paginator.HasPrev }}<a href="{{ .Paginator.Prev.URL }}">← Newer</a>{{ end }}
+        <span class="dim">{{ .Paginator.PageNumber }} / {{ .Paginator.TotalPages }}</span>
+        {{ if .Paginator.HasNext }}<a href="{{ .Paginator.Next.URL }}">Older →</a>{{ end }}
+      </nav>
     {{ end }}
-  </ul>
-
-  {{ if gt .Paginator.TotalPages 1 }}
-    <nav class="pager mono">
-      {{ if .Paginator.HasPrev }}<a href="{{ .Paginator.Prev.URL }}">← Newer</a>{{ end }}
-      <span class="dim">{{ .Paginator.PageNumber }} / {{ .Paginator.TotalPages }}</span>
-      {{ if .Paginator.HasNext }}<a href="{{ .Paginator.Next.URL }}">Older →</a>{{ end }}
-    </nav>
-  {{ end }}
-</div>
+  </div>
+{{ end }}
 {{ end }}

@@ -13,11 +13,12 @@
       <a href="{{ .URL }}" class="nav__link{{ if $active }} is-active{{ end }}">{{ .Name }}</a>
     {{ else }}
       {{/* Fallback if no menu configured */}}
-      <a href="{{ "/" | relURL }}" class="nav__link{{ if .IsHome }} is-active{{ end }}">Home</a>
+      <a href="{{ "/about/" | relURL }}" class="nav__link">About</a>
+      <a href="{{ "/archive/" | relURL }}" class="nav__link">Archive</a>
       <a href="{{ "/photos/" | relURL }}" class="nav__link">Photos</a>
-      <a href="{{ "/categories/books/" | relURL }}" class="nav__link">Books</a>
-      <a href="{{ "/categories/video-games/" | relURL }}" class="nav__link">Games</a>
+      <a href="{{ "/categories/video-games/" | relURL }}" class="nav__link">What I'm Playing</a>
       <a href="{{ "/categories/pigeons/" | relURL }}" class="nav__link">Pigeons</a>
+      <a href="{{ "/categories/books/" | relURL }}" class="nav__link">Books</a>
     {{ end }}
   </nav>
 
