@@ -492,6 +492,15 @@ html[data-fonts="hyperlegible"] .serif-d { font-weight: 700; letter-spacing: -0.
   line-height: 1.05;
   letter-spacing: -0.015em;
 }
+.now-playing__title-link,
+.game-link {
+  text-decoration: underline;
+  text-decoration-color: var(--feather);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.15s;
+}
+.now-playing__title-link:hover,
+.game-link:hover { text-decoration-color: var(--iri-teal); }
 .now-playing__note { font-size: 13.5px; margin: 0; }
 
 .two-col {
