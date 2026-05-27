@@ -79,23 +79,33 @@
     .then(function (r) { return r.json(); })
     .then(function (feed) {
       var photoMap = {};
+      var latestPhoto = null;   /* most recent photo in feed, any post */
+
       (feed.items || []).forEach(function (item) {
         var img = firstImg(item.content_html);
         if (!img) return;
-        /* Check whether any roster bird's name appears in the post text */
+        /* Track the most recent photo across all pigeon posts */
+        if (!latestPhoto) latestPhoto = img;
+        /* Try to match a specific bird by name appearing in the post text */
         var text = ((item.content_text || '') + ' ' + (item.title || '')).toLowerCase();
         ROSTER.forEach(function (b) {
           var key = b.name.toLowerCase();
-          /* Only take the first photo found per bird */
           if (!photoMap[key] && text.indexOf(key) !== -1) {
             photoMap[key] = img;
           }
         });
       });
+
+      /* Featured bird (ROSTER[0]) gets the most recent photo as fallback
+         so there's always something to show even when posts don't name a bird */
+      if (ROSTER.length && latestPhoto) {
+        var featKey = ROSTER[0].name.toLowerCase();
+        if (!photoMap[featKey]) photoMap[featKey] = latestPhoto;
+      }
+
       render(photoMap);
     })
     .catch(function () {
-      /* Feed unavailable — render with placeholders */
       render({});
     });
 }());
