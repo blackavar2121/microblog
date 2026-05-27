@@ -353,6 +353,17 @@ html[data-fonts="hyperlegible"] .serif-d { font-weight: 700; letter-spacing: -0.
   background: var(--paper-2);
   padding: 1px 5px;
 }
+/* Responsive video embeds (YouTube oEmbed, iframes) */
+.prose__body iframe,
+.post-body iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  border: none;
+  border-radius: 6px;
+  margin: var(--s-5) 0;
+  display: block;
+}
 .prose__body pre {
   font-family: var(--font-mono);
   font-size: 13px;
