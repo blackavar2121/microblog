@@ -1,14 +1,5 @@
 {
-  "now_playing": [
-    {
-      "title": "Absolum",
-      "platform": "PC",
-      "hours": 0.0,
-      "started": "2026-05-26",
-      "cover_url": "https://cdn.cloudflare.steamstatic.com/steam/apps/1904480/library_600x900.jpg",
-      "steam_url": "https://store.steampowered.com/app/1904480/Absolum/"
-    }
-  ],
+  "now_playing": [],
   "backlog": [],
   "finished": []
 }
