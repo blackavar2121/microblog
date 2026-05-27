@@ -1,12 +1,12 @@
 {
-  "now_playing": [],
-  "backlog": [],
-  "finished": [
+  "now_playing": [
     {
       "title": "Absolum",
       "platform": "PC",
-      "finished": "2026-05-26",
-      "rating": 4
+      "hours": 0.0,
+      "started": "2026-05-26"
     }
-  ]
+  ],
+  "backlog": [],
+  "finished": []
 }

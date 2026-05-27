@@ -1,11 +1,12 @@
 {
-  "reading": [],
-  "finished": [
+  "reading": [
     {
       "title": "Hardcore Zen",
       "author": "Brad Warner",
-      "finished": "2026-05-26",
-      "rating": 4
+      "cover_url": "https://upload.wikimedia.org/wikipedia/en/c/cc/Hardcore_Zen_cover.jpg?utm_source=en.wikipedia.org&utm_campaign=parser&utm_content=thumbnail_unscaled",
+      "progress": 0.5,
+      "started": "2026-05-26"
     }
-  ]
+  ],
+  "finished": []
 }
