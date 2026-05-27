@@ -1,79 +1,88 @@
-<div class="grid-1col">
-  {{ partial "page-header.html" (dict "eyebrow" "Library" "title" "Books." "meta" (printf "%d posts" (len .Pages))) }}
+{{/* Books page — entire UI is JS-rendered to survive Micro.blog's multi-template stacking */}}
+<div class="js-books-root"></div>
 
-  {{ $shelves := .Site.Data.bookshelves | default dict }}
-  {{ $hasShelvesData := or $shelves.reading $shelves.finished }}
+<script>
+(function () {
+  if (window.__booksMounted) return;
+  window.__booksMounted = true;
 
-  {{ if $hasShelvesData }}
+  var root = document.querySelector('.js-books-root');
+  if (!root) return;
 
-    {{ with $shelves.reading }}
-    <section>
-      <div class="eyebrow">Currently reading</div>
-      <div class="book-grid book-grid--reading">
-        {{ range . }}
-          <article class="book-card">
-            {{ if .cover_url }}
-              <img src="{{ .cover_url }}" alt="cover" class="book-card__cover" />
-            {{ else }}
-              <div class="ph book-card__cover" data-label="cover"></div>
-            {{ end }}
-            <div>
-              <h3 class="serif-d book-card__title">{{ .title }}</h3>
-              <p class="serif italic dim book-card__author">{{ .author }}</p>
-              {{ with .progress }}
-                <div class="progress"><div class="progress__bar" style="width: {{ mul . 100 }}%"></div></div>
-                <p class="mono small dim book-card__progress">
-                  <span>Started {{ $.started }}</span><span>{{ mul . 100 | printf "%.0f" }}%</span>
-                </p>
-              {{ end }}
-            </div>
-          </article>
-        {{ end }}
-      </div>
-    </section>
-    {{ end }}
+  function stars(r) {
+    var s = '';
+    for (var i = 0; i < 5; i++) s += i < r ? '★' : '<span class="dim">★</span>';
+    return s;
+  }
 
-    {{ with $shelves.finished }}
-    <section>
-      <div class="eyebrow">Finished — most recent first</div>
-      <table class="books-table">
-        <thead>
-          <tr class="mono small dim">
-            <th>Date</th><th>Title</th><th>Author</th><th class="text-right">Rating</th>
-          </tr>
-        </thead>
-        <tbody>
-          {{ range . }}
-            <tr>
-              <td class="mono small dim">{{ .finished }}</td>
-              <td class="serif-d">{{ .title }}</td>
-              <td class="serif italic dim">{{ .author }}</td>
-              <td class="text-right stars">
-                {{ range seq .rating }}★{{ end }}{{ range seq (sub 5 .rating) }}<span class="dim">★</span>{{ end }}
-              </td>
-            </tr>
-          {{ end }}
-        </tbody>
-      </table>
-    </section>
-    {{ end }}
+  function pct(p) { return Math.round(p * 100) + '%'; }
 
-  {{ else }}
+  function render(d) {
+    var reading  = d.reading  || [];
+    var finished = d.finished || [];
 
-    {{/* No shelves data — show posts tagged "books" */}}
-    <ul class="post-list">
-      {{ range .Paginator.Pages }}
-        <li>{{ partial "post-card.html" . }}</li>
-      {{ end }}
-    </ul>
+    var readingHTML = '';
+    if (reading.length) {
+      var cards = reading.map(function (b) {
+        var cover = b.cover_url
+          ? '<img src="' + b.cover_url + '" alt="cover" class="book-card__cover" />'
+          : '<div class="ph book-card__cover" data-label="cover"></div>';
+        var progress = (b.progress != null)
+          ? '<div class="progress"><div class="progress__bar" style="width:' + pct(b.progress) + '"></div></div>'
+            + '<p class="mono small dim book-card__progress"><span>Started ' + (b.started || '') + '</span><span>' + pct(b.progress) + '</span></p>'
+          : '';
+        return '<article class="book-card">'
+          + cover
+          + '<div>'
+          + '<h3 class="serif-d book-card__title">' + b.title + '</h3>'
+          + '<p class="serif italic dim book-card__author">' + b.author + '</p>'
+          + progress
+          + '</div>'
+          + '</article>';
+      }).join('');
+      readingHTML = '<section>'
+        + '<div class="eyebrow">Currently reading</div>'
+        + '<div class="book-grid book-grid--reading">' + cards + '</div>'
+        + '</section>';
+    }
 
-    {{ if gt .Paginator.TotalPages 1 }}
-      <nav class="pager mono">
-        {{ if .Paginator.HasPrev }}<a href="{{ .Paginator.Prev.URL }}">← Newer</a>{{ end }}
-        <span class="dim">{{ .Paginator.PageNumber }} / {{ .Paginator.TotalPages }}</span>
-        {{ if .Paginator.HasNext }}<a href="{{ .Paginator.Next.URL }}">Older →</a>{{ end }}
-      </nav>
-    {{ end }}
+    var finishedHTML = '';
+    if (finished.length) {
+      var rows = finished.map(function (b) {
+        return '<tr>'
+          + '<td class="mono small dim">' + b.finished + '</td>'
+          + '<td class="serif-d">' + b.title + '</td>'
+          + '<td class="serif italic dim">' + b.author + '</td>'
+          + '<td class="text-right stars">' + stars(b.rating) + '</td>'
+          + '</tr>';
+      }).join('');
+      finishedHTML = '<section>'
+        + '<div class="eyebrow">Finished — most recent first</div>'
+        + '<table class="books-table">'
+        + '<thead><tr class="mono small dim"><th>Date</th><th>Title</th><th>Author</th><th class="text-right">Rating</th></tr></thead>'
+        + '<tbody>' + rows + '</tbody>'
+        + '</table>'
+        + '</section>';
+    }
 
-  {{ end }}
-</div>
+    var emptyHTML = (!reading.length && !finished.length)
+      ? '<p class="mono small dim">Nothing here yet.</p>'
+      : '';
+
+    root.innerHTML = '<div class="grid-1col">'
+      + '<div class="eyebrow eyebrow--leader">Library</div>'
+      + '<h1 class="serif-d page-header__title">Books.</h1>'
+      + readingHTML
+      + finishedHTML
+      + emptyHTML
+      + '</div>';
+  }
+
+  fetch('https://raw.githubusercontent.com/blackavar2121/microblog/main/data/books.json')
+    .then(function (r) { return r.json(); })
+    .then(render)
+    .catch(function () {
+      root.innerHTML = '<p class="mono small dim">Could not load books data.</p>';
+    });
+}());
+</script>
