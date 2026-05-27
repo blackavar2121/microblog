@@ -3,8 +3,12 @@
 
 <script>
 (function () {
-  if (window.__gamesMounted) return;
-  window.__gamesMounted = true;
+  /* v2: supports steam_url links.
+     Always wins over the old unversioned guard — if an older paste runs
+     first we overwrite its render; if we run first we block the old paste. */
+  if ((window.__gamesV || 0) >= 2) return;
+  window.__gamesV      = 2;
+  window.__gamesMounted = true;   /* block the old-style guard too */
 
   var root = document.querySelector('.js-games-root');
   if (!root) return;
@@ -22,8 +26,8 @@
 
     var nowHTML = np.map(function (g) {
       var art = g.cover_url
-        ? '<img src="' + g.cover_url + '" alt="' + g.title + '" class="now-playing__art" />'
-        : '<div class="now-playing__art ph iri" aria-label="key art"></div>';
+        ? '<div class="now-playing__art-wrap"><img src="' + g.cover_url + '" alt="' + g.title + '" class="now-playing__art" /></div>'
+        : '<div class="now-playing__art-wrap now-playing__art--ph ph iri" aria-label="key art"></div>';
       var titleEl = g.steam_url
         ? '<a href="' + g.steam_url + '" target="_blank" rel="noopener" class="now-playing__title-link">' + g.title + '</a>'
         : g.title;
@@ -32,7 +36,7 @@
         + '<div class="now-playing__body">'
         + '<span class="badge badge--iri mono">Now playing</span>'
         + '<h2 class="serif-d now-playing__title">' + titleEl + '</h2>'
-        + '<p class="mono small dim">' + g.platform + ' · ' + g.hours + ' hours · started ' + g.started + '</p>'
+        + '<p class="mono small dim">' + g.platform + ' \xb7 ' + g.hours + ' hours \xb7 started ' + g.started + '</p>'
         + (g.note ? '<p class="serif italic dim now-playing__note">&ldquo;' + g.note + '&rdquo;</p>' : '')
         + '</div></article>';
     }).join('');
