@@ -1,3 +1,4 @@
+<div data-tpl="header">
 <div class="iri-bar" aria-hidden="true"></div>
 
 <header class="site-header">
@@ -36,6 +37,15 @@
     </button>
   </div>
 </header>
+</div><!-- /data-tpl="header" -->
+
+<script>
+/* Dedup header — keep only the first instance */
+(function () {
+  var els = document.querySelectorAll('[data-tpl="header"]');
+  for (var i = 1; i < els.length; i++) els[i].remove();
+}());
+</script>
 
 <script>
 (function () {
