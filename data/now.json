@@ -1,7 +1,19 @@
 {
   "items": [
-    { "label": "Reading", "value": "Hardcore Zen", "sub": "by Brad Warner" },
-    { "label": "Playing", "value": "Absolum",        "sub": "PC · just started" },
-    { "label": "Watching", "value": "Pigeons",        "sub": "always pigeons" }
+    {
+      "label": "Reading",
+      "value": "Hardcore Zen",
+      "sub": "by Brad Warner"
+    },
+    {
+      "label": "Playing",
+      "value": "Absolum",
+      "sub": "PC \u00b7 just started"
+    },
+    {
+      "label": "Watching",
+      "value": "Pigeons",
+      "sub": "always pigeons"
+    }
   ]
 }
