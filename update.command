@@ -56,39 +56,45 @@ def build_html(now, games, books, pigeons):
     def val(d, k, fallback=""): return str(d.get(k, fallback))
 
     def finrow(i, g):
+        import json as _j
+        data = _j.dumps(g).replace('"', '&quot;')
         return f"""
-        <tr>
+        <tr data-entry="{data}">
           <td class="num">{i+1}</td>
           <td>{g['title']}</td>
           <td>{g.get('platform','')}</td>
           <td>{g.get('finished','')}</td>
           <td>{'★' * g.get('rating',0)}{'☆' * (5 - g.get('rating',0))}</td>
+          <td><button type="button" class="remove-btn" onclick="this.closest('tr').remove()" title="Remove">\xd7</button></td>
         </tr>"""
 
     def bookrow(i, b):
+        import json as _j
+        data = _j.dumps(b).replace('"', '&quot;')
         return f"""
-        <tr>
+        <tr data-entry="{data}">
           <td class="num">{i+1}</td>
           <td>{b['title']}</td>
           <td>{b.get('author','')}</td>
           <td>{b.get('finished','')}</td>
           <td>{'★' * b.get('rating',0)}{'☆' * (5 - b.get('rating',0))}</td>
+          <td><button type="button" class="remove-btn" onclick="this.closest('tr').remove()" title="Remove">\xd7</button></td>
         </tr>"""
 
     fin_rows  = "".join(finrow(i,g)  for i,g in enumerate(games["finished"]))
     book_rows = "".join(bookrow(i,b) for i,b in enumerate(books["finished"] or []))
 
     fin_table = f"""
-      <table>
-        <thead><tr><th>#</th><th>Title</th><th>Platform</th><th>Finished</th><th>Rating</th></tr></thead>
+      <table id="fin-games-table">
+        <thead><tr><th>#</th><th>Title</th><th>Platform</th><th>Finished</th><th>Rating</th><th></th></tr></thead>
         <tbody>{fin_rows}</tbody>
       </table>""" if fin_rows else "<p class='empty'>No finished games yet.</p>"
 
     book_fin_table = f"""
-      <table>
-        <thead><tr><th>#</th><th>Title</th><th>Author</th><th>Finished</th><th>Rating</th></tr></thead>
+      <table id="fin-books-table">
+        <thead><tr><th>#</th><th>Title</th><th>Author</th><th>Finished</th><th>Rating</th><th></th></tr></thead>
         <tbody>{book_rows}</tbody>
-      </table>""" if book_rows else "<p class='empty'>No finished books yet.</p>"
+      </table>""" if book_rows else "<p class='empty' id='fin-books-table'>No finished books yet.</p>"
 
     # Pigeons roster rows as JS literal for the dynamic editor
     birds_js = json.dumps(birds)
@@ -274,6 +280,7 @@ def build_html(now, games, books, pigeons):
     <div class="divider" style="margin-top:1.5rem"></div>
     <h2 style="margin-top:1rem">Finished games</h2>
     {fin_table}
+    <input type="hidden" name="finished_games_json" id="finished_games_json">
   </section>
 
   <!-- ── NOW READING ────────────────────────────────────────────── -->
@@ -333,6 +340,7 @@ def build_html(now, games, books, pigeons):
     <div class="divider" style="margin-top:1.5rem"></div>
     <h2 style="margin-top:1rem">Finished books</h2>
     {book_fin_table}
+    <input type="hidden" name="finished_books_json" id="finished_books_json">
   </section>
 
   <!-- ── PIGEONS ────────────────────────────────────────────────── -->
@@ -414,8 +422,18 @@ function toggleFinish(btn) {{
 }}
 
 /* ── save ── */
+function collectTable(tableId, fields) {{
+  var tbody = document.querySelector('#' + tableId + ' tbody');
+  if (!tbody) return [];
+  return Array.from(tbody.querySelectorAll('tr')).map(function(tr) {{
+    try {{ return JSON.parse(tr.getAttribute('data-entry')); }} catch(e) {{ return null; }}
+  }}).filter(Boolean);
+}}
+
 function save() {{
-  document.getElementById('pigeons_json').value = JSON.stringify(collectBirds());
+  document.getElementById('pigeons_json').value          = JSON.stringify(collectBirds());
+  document.getElementById('finished_games_json').value   = JSON.stringify(collectTable('fin-games-table'));
+  document.getElementById('finished_books_json').value   = JSON.stringify(collectTable('fin-books-table'));
   var btn = document.querySelector('.save-btn');
   var st  = document.getElementById('status');
   btn.disabled = true;
@@ -556,6 +574,17 @@ class Handler(BaseHTTPRequestHandler):
                         pct = int(cb["progress"]*100)
                         ri["value"] = btitle
                         ri["sub"]   = "by " + cb["author"] + (" · " + str(pct) + "%" if pct else "")
+
+            # ── finished lists (deletions) ───────────────────────
+            fgj = params.get("finished_games_json","").strip()
+            if fgj:
+                try: games["finished"] = json.loads(fgj)
+                except Exception: pass
+
+            fbj = params.get("finished_books_json","").strip()
+            if fbj:
+                try: books["finished"] = json.loads(fbj)
+                except Exception: pass
 
             # ── pigeons roster ───────────────────────────────────
             pj = params.get("pigeons_json","").strip()
