@@ -2,13 +2,21 @@
   <div class="eyebrow eyebrow--leader">Now</div>
 
   <div class="now-stack">
-    {{ range .Site.Data.now.items }}
-      <div class="now-item">
-        <div class="eyebrow eyebrow--small">{{ .label }}</div>
-        <div class="serif-d now-item__value">{{ .value }}</div>
-        {{ with .sub }}<div class="serif italic dim small">{{ . }}</div>{{ end }}
-      </div>
-    {{ end }}
+    <div class="now-item">
+      <div class="eyebrow eyebrow--small">Reading</div>
+      <div class="serif-d now-item__value">The Overstory</div>
+      <div class="serif italic dim small">by Richard Powers · 62%</div>
+    </div>
+    <div class="now-item">
+      <div class="eyebrow eyebrow--small">Playing</div>
+      <div class="serif-d now-item__value">Absolum</div>
+      <div class="serif italic dim small">PC · just started</div>
+    </div>
+    <div class="now-item">
+      <div class="eyebrow eyebrow--small">Watching</div>
+      <div class="serif-d now-item__value">Pigeons</div>
+      <div class="serif italic dim small">always pigeons</div>
+    </div>
   </div>
 
   <hr class="rule" />
@@ -19,12 +27,11 @@
     <li>JSON · <a href="{{ "feed.json" | absURL }}">/feed.json</a></li>
   </ul>
 
-  {{ with .Site.Data.now.social }}
   <div class="eyebrow" style="margin-top: var(--s-4);">Elsewhere</div>
   <ul class="sub-list mono">
-    {{ range . }}
-      <li>{{ .label }} · <a href="{{ .url }}">{{ .handle }}</a></li>
-    {{ end }}
+    <li>Bluesky · <a href="https://bsky.app/profile/blackavar.bsky.social">@blackavar.bsky.social</a></li>
+    <li>Mastodon · <a href="https://twit.social/@Blackavar">@Blackavar@twit.social</a></li>
+    <li>Threads · <a href="https://www.threads.net/@blackavar">@blackavar</a></li>
+    <li>Flickr · <a href="https://www.flickr.com/photos/blackavar">blackavar</a></li>
   </ul>
-  {{ end }}
 </aside>
