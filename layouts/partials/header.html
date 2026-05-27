@@ -9,8 +9,10 @@
   <nav class="nav" aria-label="Primary">
     {{ $current := .RelPermalink }}
     {{ range .Site.Menus.main }}
-      {{ $active := or (eq $current .URL) (and (ne .URL "/") (hasPrefix $current .URL)) }}
-      <a href="{{ .URL }}" class="nav__link{{ if $active }} is-active{{ end }}">{{ .Name }}</a>
+      {{ $url := .URL }}
+      {{ if eq $url "/books/" }}{{ $url = "/categories/books/" }}{{ end }}
+      {{ $active := or (eq $current $url) (and (ne $url "/") (hasPrefix $current $url)) }}
+      <a href="{{ $url }}" class="nav__link{{ if $active }} is-active{{ end }}">{{ .Name }}</a>
     {{ else }}
       {{/* Fallback if no menu configured */}}
       <a href="{{ "/about/" | relURL }}" class="nav__link">About</a>
