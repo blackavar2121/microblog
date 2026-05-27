@@ -484,7 +484,7 @@ html[data-fonts="hyperlegible"] .serif-d { font-weight: 700; letter-spacing: -0.
   border: 1px solid var(--line);
   margin-bottom: var(--s-6);
 }
-.now-playing__art { width: 160px; height: 213px; object-fit: cover; flex-shrink: 0; border-radius: 4px; }
+.now-playing__art { width: 160px; height: 213px; min-height: 213px; object-fit: cover; object-position: center top; align-self: start; flex-shrink: 0; border-radius: 4px; display: block; }
 .now-playing__body { display: flex; flex-direction: column; justify-content: center; }
 .now-playing__title {
   font-size: 30px;
