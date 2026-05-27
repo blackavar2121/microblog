@@ -1,11 +1,18 @@
 {
   "reading": [
     {
-      "title": "The Overstory",
-      "author": "Richard Powers",
+      "title": "Hardcore Zen",
+      "author": "Brad Warner",
       "cover_url": "",
-      "progress": 0.62,
-      "started": "2026-05-01"
+      "progress": 0,
+      "started": "2026-05-25"
+    },
+    {
+      "title": "Exodus: The Archimedes Engine",
+      "author": "Peter F. Hamilton",
+      "cover_url": "",
+      "progress": 0,
+      "started": "2026-05-25"
     }
   ],
   "finished": []
