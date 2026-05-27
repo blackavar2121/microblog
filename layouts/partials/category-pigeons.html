@@ -1,49 +1,102 @@
-<div class="grid-1col">
-  <header class="pigeons-header">
-    <div>
-      <div class="eyebrow eyebrow--leader">Catalogue</div>
-      <h1 class="serif-d page-header__title">Pigeons.</h1>
-    </div>
-    <div class="mono small dim text-right">
-      {{ len .Site.Data.pigeons.birds }} catalogued · ongoing
-    </div>
-  </header>
+{{/* Pigeons page — entire UI is JS-rendered to survive Micro.blog's multi-template stacking */}}
+<div class="js-pigeons-root"></div>
 
-  {{ $birds := .Site.Data.pigeons.birds }}
-  {{ if $birds }}
-    {{ $featured := index $birds 0 }}
-    <div class="pigeons-detail">
-      <section>
-        <div class="ph iri pigeons-detail__photo" data-label="pigeon · {{ $featured.name | lower }}"></div>
-        <h2 class="serif-d pigeons-detail__name">{{ $featured.name }}</h2>
-        <p class="serif italic dim">Last spotted at the {{ $featured.spot }}, on {{ $featured.date }}.</p>
-        <p class="serif pigeons-detail__note">{{ $featured.note }}</p>
-      </section>
-      <section>
-        <div class="eyebrow">The roster</div>
-        <ul class="roster">
-          {{ range $i, $b := $birds }}
-            <li>
-              <span class="mono small dim">{{ printf "%02d" (add $i 1) }}</span>
-              <div class="ph roster__photo" aria-hidden="true"></div>
-              <div>
-                <div class="serif-d roster__name">{{ .name }}</div>
-                <div class="mono small dim">{{ .spot }}</div>
-              </div>
-              <span class="mono small dim">{{ .date }}</span>
-            </li>
-          {{ end }}
-        </ul>
-      </section>
-    </div>
-  {{ end }}
+<script>
+(function () {
+  if (window.__pigeonsMounted) return;
+  window.__pigeonsMounted = true;
 
-  {{/* Chronological pigeon posts from the category */}}
-  {{ if gt (len .Pages) 0 }}
-    <hr class="rule" />
-    <div class="eyebrow eyebrow--leader">Recent pigeon sightings</div>
-    <ul class="post-list">
-      {{ range first 6 .Pages }}<li>{{ partial "post-card.html" . }}</li>{{ end }}
-    </ul>
-  {{ end }}
-</div>
+  var root = document.querySelector('.js-pigeons-root');
+  if (!root) return;
+
+  /* Roster from data/pigeons.yml — Hugo serialises it at build time */
+  var ROSTER = [
+    {{ range .Site.Data.pigeons.birds -}}
+    { name: {{ .name | jsonify }}, spot: {{ .spot | jsonify }}, date: {{ .date | jsonify }}, note: {{ .note | jsonify }} },
+    {{ end -}}
+  ];
+
+  /* Pull the first <img src="…"> out of a content_html string */
+  function firstImg(html) {
+    var m = (html || '').match(/<img[^>]+src="([^"]+)"/i);
+    return m ? m[1] : null;
+  }
+
+  function render(photoMap) {
+    if (!ROSTER.length) {
+      root.innerHTML = '<p class="mono small dim">No pigeons catalogued yet.</p>';
+      return;
+    }
+
+    var featured = ROSTER[0];
+    var featPhoto = photoMap[featured.name.toLowerCase()];
+
+    var featArt = featPhoto
+      ? '<img src="' + featPhoto + '" alt="' + featured.name + '" class="pigeons-detail__photo pigeons-detail__photo--img" />'
+      : '<div class="ph iri pigeons-detail__photo" data-label="pigeon · ' + featured.name.toLowerCase() + '"></div>';
+
+    var rosterHTML = ROSTER.map(function (b, i) {
+      var photo = photoMap[b.name.toLowerCase()];
+      var thumb = photo
+        ? '<img src="' + photo + '" alt="' + b.name + '" class="roster__photo roster__photo--img" />'
+        : '<div class="ph roster__photo" aria-hidden="true"></div>';
+      return '<li>'
+        + '<span class="mono small dim">' + String(i + 1).padStart(2, '0') + '</span>'
+        + thumb
+        + '<div>'
+        +   '<div class="serif-d roster__name">' + b.name + '</div>'
+        +   '<div class="mono small dim">' + b.spot + '</div>'
+        + '</div>'
+        + '<span class="mono small dim">' + b.date + '</span>'
+        + '</li>';
+    }).join('');
+
+    root.innerHTML = '<div class="grid-1col">'
+      + '<header class="pigeons-header">'
+      +   '<div>'
+      +     '<div class="eyebrow eyebrow--leader">Catalogue</div>'
+      +     '<h1 class="serif-d page-header__title">Pigeons.</h1>'
+      +   '</div>'
+      +   '<div class="mono small dim text-right">' + ROSTER.length + ' catalogued · ongoing</div>'
+      + '</header>'
+      + '<div class="pigeons-detail">'
+      +   '<section>'
+      +     featArt
+      +     '<h2 class="serif-d pigeons-detail__name">' + featured.name + '</h2>'
+      +     '<p class="serif italic dim">Last spotted at the ' + featured.spot + ', on ' + featured.date + '.</p>'
+      +     '<p class="serif pigeons-detail__note">' + featured.note + '</p>'
+      +   '</section>'
+      +   '<section>'
+      +     '<div class="eyebrow">The roster</div>'
+      +     '<ul class="roster">' + rosterHTML + '</ul>'
+      +   '</section>'
+      + '</div>'
+      + '</div>';
+  }
+
+  /* Fetch pigeon posts and build name → photo URL map */
+  fetch('https://bricolage.micro.blog/categories/pigeons/feed.json')
+    .then(function (r) { return r.json(); })
+    .then(function (feed) {
+      var photoMap = {};
+      (feed.items || []).forEach(function (item) {
+        var img = firstImg(item.content_html);
+        if (!img) return;
+        /* Check whether any roster bird's name appears in the post text */
+        var text = ((item.content_text || '') + ' ' + (item.title || '')).toLowerCase();
+        ROSTER.forEach(function (b) {
+          var key = b.name.toLowerCase();
+          /* Only take the first photo found per bird */
+          if (!photoMap[key] && text.indexOf(key) !== -1) {
+            photoMap[key] = img;
+          }
+        });
+      });
+      render(photoMap);
+    })
+    .catch(function () {
+      /* Feed unavailable — render with placeholders */
+      render({});
+    });
+}());
+</script>

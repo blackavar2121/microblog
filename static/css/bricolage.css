@@ -548,6 +548,8 @@ html[data-fonts="hyperlegible"] .serif-d { font-weight: 700; letter-spacing: -0.
   align-items: center;
 }
 .roster__photo { width: 38px; height: 38px; }
+.roster__photo--img { object-fit: cover; border-radius: 4px; }
+.pigeons-detail__photo--img { width: 100%; height: 300px; object-fit: cover; border-radius: 6px; margin-bottom: var(--s-4); display: block; }
 .roster__name { font-size: 16px; line-height: 1.1; }
 
 /* Essay list (Longform category) */
