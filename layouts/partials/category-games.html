@@ -21,8 +21,11 @@
     var fi = d.finished    || [];
 
     var nowHTML = np.map(function (g) {
+      var art = g.cover_url
+        ? '<img src="' + g.cover_url + '" alt="' + g.title + '" class="now-playing__art" />'
+        : '<div class="now-playing__art ph iri" aria-label="key art"></div>';
       return '<article class="now-playing">'
-        + '<div class="now-playing__art ph iri" aria-label="key art"></div>'
+        + art
         + '<div class="now-playing__body">'
         + '<span class="badge badge--iri mono">Now playing</span>'
         + '<h2 class="serif-d now-playing__title">' + g.title + '</h2>'

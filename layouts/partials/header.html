@@ -8,20 +8,18 @@
   </a>
 
   <nav class="nav" aria-label="Primary">
-    {{ $current := .RelPermalink }}
-    {{ range .Site.Menus.main }}
-      {{ $url := .URL }}
-      {{ if eq $url "/books/" }}{{ $url = "/categories/books/" }}{{ end }}
-      {{ $active := or (eq $current $url) (and (ne $url "/") (hasPrefix $current $url)) }}
-      <a href="{{ $url }}" class="nav__link{{ if $active }} is-active{{ end }}">{{ .Name }}</a>
-    {{ else }}
-      {{/* Fallback if no menu configured */}}
-      <a href="{{ "/about/" | relURL }}" class="nav__link">About</a>
-      <a href="{{ "/archive/" | relURL }}" class="nav__link">Archive</a>
-      <a href="{{ "/photos/" | relURL }}" class="nav__link">Photos</a>
-      <a href="{{ "/categories/video-games/" | relURL }}" class="nav__link">What I'm Playing</a>
-      <a href="{{ "/categories/pigeons/" | relURL }}" class="nav__link">Pigeons</a>
-      <a href="{{ "/categories/books/" | relURL }}" class="nav__link">Books</a>
+    {{ $p := .RelPermalink }}
+    {{ $links := slice
+      (dict "name" "Photos"  "url" "/photos/")
+      (dict "name" "Games"   "url" "/categories/video-games/")
+      (dict "name" "Books"   "url" "/categories/books/")
+      (dict "name" "Pigeons" "url" "/categories/pigeons/")
+      (dict "name" "Archive" "url" "/archive/")
+      (dict "name" "About"   "url" "/about/")
+    }}
+    {{ range $links }}
+      {{ $active := and (ne .url "/") (hasPrefix $p .url) }}
+      <a href="{{ .url | relURL }}" class="nav__link{{ if $active }} is-active{{ end }}">{{ .name }}</a>
     {{ end }}
   </nav>
 
