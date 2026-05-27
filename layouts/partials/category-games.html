@@ -1,59 +1,33 @@
 <div class="grid-1col">
-  {{ $g := .Site.Data.games }}
   <header class="games-header">
     <div>
       <div class="eyebrow eyebrow--leader">Games journal</div>
       <h1 class="serif-d page-header__title">Games.</h1>
     </div>
     <div class="stat-row mono">
-      <div class="stat"><div class="stat__label">Now</div><div class="stat__value serif-d">{{ len $g.now_playing }}</div></div>
-      <div class="stat"><div class="stat__label">Backlog</div><div class="stat__value serif-d">{{ len $g.backlog }}</div></div>
-      <div class="stat"><div class="stat__label">Finished</div><div class="stat__value serif-d">{{ len $g.finished }}</div></div>
+      <div class="stat"><div class="stat__label">Now</div><div class="stat__value serif-d" id="js-stat-now">—</div></div>
+      <div class="stat"><div class="stat__label">Backlog</div><div class="stat__value serif-d" id="js-stat-backlog">—</div></div>
+      <div class="stat"><div class="stat__label">Finished</div><div class="stat__value serif-d" id="js-stat-finished">—</div></div>
     </div>
   </header>
 
-  {{ range $g.now_playing }}
-    <article class="now-playing">
-      <div class="now-playing__art ph iri" aria-label="key art"></div>
-      <div class="now-playing__body">
-        <span class="badge badge--iri mono">Now playing</span>
-        <h2 class="serif-d now-playing__title">{{ .title }}</h2>
-        <p class="mono small dim">{{ .platform }} · {{ .hours }} hours · started {{ .started }}</p>
-        {{ with .note }}<p class="serif italic dim now-playing__note">"{{ . }}"</p>{{ end }}
-      </div>
-    </article>
-  {{ end }}
+  <div id="js-now-playing"></div>
 
   <div class="two-col">
     <section>
       <div class="eyebrow">Backlog</div>
-      <ol class="rank-list">
-        {{ range $i, $b := $g.backlog }}
-          <li>
-            <span class="mono small dim">{{ printf "%02d" (add $i 1) }}</span>
-            <span class="serif-d">{{ .title }}</span>
-            <span class="mono small dim">{{ .platform }}</span>
-          </li>
-        {{ end }}
+      <ol class="rank-list" id="js-backlog">
+        <li class="mono small dim">Loading…</li>
       </ol>
     </section>
     <section>
       <div class="eyebrow">Finished</div>
-      <ul class="date-list">
-        {{ range $g.finished }}
-          <li>
-            <time class="mono small dim">{{ .finished }}</time>
-            <span class="serif-d">{{ .title }}</span>
-            <span class="stars" aria-label="{{ .rating }} of 5 stars">
-              {{ range seq .rating }}★{{ end }}{{ range seq (sub 5 .rating) }}<span class="dim">★</span>{{ end }}
-            </span>
-          </li>
-        {{ end }}
+      <ul class="date-list" id="js-finished">
+        <li class="mono small dim">Loading…</li>
       </ul>
     </section>
   </div>
 
-  {{/* Below the journal: chronological category posts (your written thoughts about games) */}}
   {{ if gt (len .Pages) 0 }}
     <hr class="rule" />
     <div class="eyebrow eyebrow--leader">Posts about games</div>
@@ -62,3 +36,71 @@
     </ul>
   {{ end }}
 </div>
+
+<script>
+(function () {
+  var RAW = 'https://raw.githubusercontent.com/blackavar2121/microblog/main/data/games.json';
+
+  function stars(rating) {
+    var s = '';
+    for (var i = 0; i < 5; i++) {
+      s += i < rating ? '★' : '<span class="dim">★</span>';
+    }
+    return s;
+  }
+
+  fetch(RAW)
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+
+      // Stats
+      document.getElementById('js-stat-now').textContent      = d.now_playing.length;
+      document.getElementById('js-stat-backlog').textContent   = d.backlog.length;
+      document.getElementById('js-stat-finished').textContent  = d.finished.length;
+
+      // Now playing
+      var nowEl = document.getElementById('js-now-playing');
+      if (d.now_playing.length) {
+        nowEl.innerHTML = d.now_playing.map(function (g) {
+          return '<article class="now-playing">'
+            + '<div class="now-playing__art ph iri" aria-label="key art"></div>'
+            + '<div class="now-playing__body">'
+            + '<span class="badge badge--iri mono">Now playing</span>'
+            + '<h2 class="serif-d now-playing__title">' + g.title + '</h2>'
+            + '<p class="mono small dim">' + g.platform + ' · ' + g.hours + ' hours · started ' + g.started + '</p>'
+            + (g.note ? '<p class="serif italic dim now-playing__note">&ldquo;' + g.note + '&rdquo;</p>' : '')
+            + '</div></article>';
+        }).join('');
+      }
+
+      // Backlog
+      var backlogEl = document.getElementById('js-backlog');
+      if (d.backlog.length) {
+        backlogEl.innerHTML = d.backlog.map(function (b, i) {
+          return '<li>'
+            + '<span class="mono small dim">' + String(i + 1).padStart(2, '0') + '</span>'
+            + '<span class="serif-d">' + b.title + '</span>'
+            + '<span class="mono small dim">' + b.platform + '</span>'
+            + '</li>';
+        }).join('');
+      } else {
+        backlogEl.innerHTML = '<li class="mono small dim">Nothing queued up yet.</li>';
+      }
+
+      // Finished
+      var finishedEl = document.getElementById('js-finished');
+      if (d.finished.length) {
+        finishedEl.innerHTML = d.finished.map(function (g) {
+          return '<li>'
+            + '<time class="mono small dim">' + g.finished + '</time>'
+            + '<span class="serif-d">' + g.title + '</span>'
+            + '<span class="stars" aria-label="' + g.rating + ' of 5 stars">' + stars(g.rating) + '</span>'
+            + '</li>';
+        }).join('');
+      } else {
+        finishedEl.innerHTML = '<li class="mono small dim">Nothing finished yet.</li>';
+      }
+    })
+    .catch(function () { /* leave loading text in place */ });
+}());
+</script>
