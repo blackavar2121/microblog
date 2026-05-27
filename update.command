@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Bricolage update tool — opens a local webpage to update now/games/books data.
+Bricolage update tool — opens a local webpage to update now/games/books/pigeons data.
 Double-click this file (or run: python3 update.command) to launch.
 Server shuts down automatically after saving.
 """
@@ -9,44 +9,52 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import parse_qs
 from datetime import date
 
-BASE        = os.path.dirname(os.path.abspath(__file__))
-NOW_FILE    = os.path.join(BASE, "data/now.json")
-GAMES_FILE  = os.path.join(BASE, "data/games.json")
-BOOKS_FILE  = os.path.join(BASE, "data/books.json")
-PORT        = 8765
+BASE         = os.path.dirname(os.path.abspath(__file__))
+NOW_FILE     = os.path.join(BASE, "data/now.json")
+GAMES_FILE   = os.path.join(BASE, "data/games.json")
+BOOKS_FILE   = os.path.join(BASE, "data/books.json")
+PIGEONS_FILE = os.path.join(BASE, "data/pigeons.json")
+PORT         = 8765
 
 # ── load helpers ─────────────────────────────────────────────────────────────
 def load():
-    with open(NOW_FILE)   as f: now   = json.load(f)
-    with open(GAMES_FILE) as f: games = json.load(f)
-    with open(BOOKS_FILE) as f: books = json.load(f)
-    return now, games, books
+    with open(NOW_FILE)     as f: now     = json.load(f)
+    with open(GAMES_FILE)   as f: games   = json.load(f)
+    with open(BOOKS_FILE)   as f: books   = json.load(f)
+    with open(PIGEONS_FILE) as f: pigeons = json.load(f)
+    return now, games, books, pigeons
 
-def get_now_item(now, label):
+def now_item(now, label):
     for item in now["items"]:
         if item["label"] == label:
             return item
     return {}
 
-def save_and_push(now, games, books):
-    with open(NOW_FILE,   "w") as f: json.dump(now,   f, indent=2)
-    with open(GAMES_FILE, "w") as f: json.dump(games, f, indent=2)
-    with open(BOOKS_FILE, "w") as f: json.dump(books, f, indent=2)
-    subprocess.run(["git", "add", "data/now.json", "data/games.json", "data/books.json"], cwd=BASE)
-    subprocess.run(["git", "commit", "-m", "Update now/games/books data", "--quiet"], cwd=BASE)
+def save_and_push(now, games, books, pigeons):
+    with open(NOW_FILE,     "w") as f: json.dump(now,     f, indent=2)
+    with open(GAMES_FILE,   "w") as f: json.dump(games,   f, indent=2)
+    with open(BOOKS_FILE,   "w") as f: json.dump(books,   f, indent=2)
+    with open(PIGEONS_FILE, "w") as f: json.dump(pigeons, f, indent=2)
+    subprocess.run([
+        "git", "add",
+        "data/now.json", "data/games.json", "data/books.json", "data/pigeons.json"
+    ], cwd=BASE)
+    subprocess.run(["git", "commit", "-m", "Update site data", "--quiet"], cwd=BASE)
     result = subprocess.run(["git", "push", "--quiet"], cwd=BASE, capture_output=True)
     return result.returncode == 0
 
 # ── HTML page ─────────────────────────────────────────────────────────────────
-def build_html(now, games, books):
+def build_html(now, games, books, pigeons):
     reading  = now_item(now, "Reading")
     playing  = now_item(now, "Playing")
     watching = now_item(now, "Watching")
     np       = games["now_playing"][0] if games["now_playing"] else {}
     cur_book = books["reading"][0]     if books["reading"]     else {}
+    birds    = pigeons.get("birds", [])
     today    = str(date.today())
 
     def val(d, k, fallback=""): return str(d.get(k, fallback))
+
     def finrow(i, g):
         return f"""
         <tr>
@@ -56,8 +64,8 @@ def build_html(now, games, books):
           <td>{g.get('finished','')}</td>
           <td>{'★' * g.get('rating',0)}{'☆' * (5 - g.get('rating',0))}</td>
         </tr>"""
+
     def bookrow(i, b):
-        pct = int((b.get('progress') or 0) * 100)
         return f"""
         <tr>
           <td class="num">{i+1}</td>
@@ -81,6 +89,9 @@ def build_html(now, games, books):
         <thead><tr><th>#</th><th>Title</th><th>Author</th><th>Finished</th><th>Rating</th></tr></thead>
         <tbody>{book_rows}</tbody>
       </table>""" if book_rows else "<p class='empty'>No finished books yet.</p>"
+
+    # Pigeons roster rows as JS literal for the dynamic editor
+    birds_js = json.dumps(birds)
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -146,6 +157,26 @@ def build_html(now, games, books):
   .finish-toggle:hover {{ text-decoration: underline; }}
   .finish-fields {{ margin-top: 1rem; display: none; }}
   .finish-fields.open {{ display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }}
+  /* Pigeon roster editor */
+  .bird-row {{
+    display: grid; grid-template-columns: 1fr 1fr auto;
+    gap: 0.75rem; align-items: end; margin-bottom: 0.75rem;
+  }}
+  .bird-row:last-child {{ margin-bottom: 0; }}
+  .remove-btn {{
+    background: none; border: 1px solid var(--border); border-radius: 6px;
+    color: var(--dim); font-size: 1rem; cursor: pointer; padding: 0.4rem 0.6rem;
+    line-height: 1; transition: border-color 0.15s, color 0.15s;
+    width: auto;
+  }}
+  .remove-btn:hover {{ border-color: var(--red); color: var(--red); }}
+  .add-bird-btn {{
+    background: none; border: 1px dashed var(--border); border-radius: 6px;
+    color: var(--accent); font-family: var(--mono); font-size: 0.8rem;
+    cursor: pointer; padding: 0.5rem 1rem; margin-top: 1rem;
+    width: 100%; transition: border-color 0.15s;
+  }}
+  .add-bird-btn:hover {{ border-color: var(--accent); }}
   .save-bar {{ position: sticky; bottom: 1.5rem; text-align: center; margin-top: 1.5rem; }}
   .save-btn {{
     background: var(--accent); color: #fff; border: none; border-radius: 8px;
@@ -304,6 +335,19 @@ def build_html(now, games, books):
     {book_fin_table}
   </section>
 
+  <!-- ── PIGEONS ────────────────────────────────────────────────── -->
+  <section>
+    <h2>Pigeons roster</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:0.5rem;margin-bottom:0.5rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border)">
+      <span style="font-size:0.7rem;font-family:var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:0.05em">Name</span>
+      <span style="font-size:0.7rem;font-family:var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:0.05em">Usual spot</span>
+      <span></span>
+    </div>
+    <div id="bird-list"></div>
+    <button type="button" class="add-bird-btn" onclick="addBird()">+ Add pigeon</button>
+    <input type="hidden" name="pigeons_json" id="pigeons_json">
+  </section>
+
 </form>
 
 <div class="save-bar">
@@ -312,6 +356,54 @@ def build_html(now, games, books):
 </div>
 
 <script>
+/* ── initial birds from server ── */
+var birds = {birds_js};
+
+function renderBirds() {{
+  var list = document.getElementById('bird-list');
+  list.innerHTML = '';
+  birds.forEach(function(b, i) {{
+    list.appendChild(makeBirdRow(b.name, b.spot, i));
+  }});
+}}
+
+function makeBirdRow(name, spot, idx) {{
+  var row = document.createElement('div');
+  row.className = 'bird-row';
+  row.innerHTML =
+    '<input class="bird-name" placeholder="Name" value="' + esc(name) + '">' +
+    '<input class="bird-spot" placeholder="usual spot" value="' + esc(spot) + '">' +
+    '<button type="button" class="remove-btn" onclick="removeBird(this)" title="Remove">\xd7</button>';
+  return row;
+}}
+
+function addBird() {{
+  var list = document.getElementById('bird-list');
+  list.appendChild(makeBirdRow('', '', list.children.length));
+}}
+
+function removeBird(btn) {{
+  btn.closest('.bird-row').remove();
+}}
+
+function esc(s) {{
+  return (s || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+}}
+
+function collectBirds() {{
+  var rows = document.querySelectorAll('.bird-row');
+  var out = [];
+  rows.forEach(function(row) {{
+    var name = row.querySelector('.bird-name').value.trim();
+    var spot = row.querySelector('.bird-spot').value.trim();
+    if (name) out.push({{ name: name, spot: spot }});
+  }});
+  return out;
+}}
+
+renderBirds();
+
+/* ── finish toggles ── */
 function toggleFinish(btn) {{
   var id  = btn.nextElementSibling.id;
   var el  = document.getElementById(id);
@@ -321,7 +413,9 @@ function toggleFinish(btn) {{
     : btn.textContent.replace('− Cancel','+ Mark');
 }}
 
+/* ── save ── */
 function save() {{
+  document.getElementById('pigeons_json').value = JSON.stringify(collectBirds());
   var btn = document.querySelector('.save-btn');
   var st  = document.getElementById('status');
   btn.disabled = true;
@@ -351,21 +445,15 @@ function save() {{
 </body>
 </html>"""
 
-def now_item(now, label):
-    for item in now["items"]:
-        if item["label"] == label:
-            return item
-    return {}
-
 # ── request handler ───────────────────────────────────────────────────────────
 server_ref = None
 
 class Handler(BaseHTTPRequestHandler):
-    def log_message(self, *args): pass   # silence request logs
+    def log_message(self, *args): pass
 
     def do_GET(self):
-        now, games, books = load()
-        html = build_html(now, games, books)
+        now, games, books, pigeons = load()
+        html = build_html(now, games, books, pigeons)
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
         self.end_headers()
@@ -377,7 +465,7 @@ class Handler(BaseHTTPRequestHandler):
         params = {k: v[0] for k, v in parse_qs(body).items() if v}
 
         try:
-            now, games, books = load()
+            now, games, books, pigeons = load()
 
             # ── now panel ────────────────────────────────────────
             for label, key in [("Reading","reading"), ("Playing","playing"), ("Watching","watching")]:
@@ -410,7 +498,6 @@ class Handler(BaseHTTPRequestHandler):
                         "hours":    0,
                         "started":  str(dt.today()),
                     }]
-                    # update now panel playing line
                     pi = now_item(now, "Playing")
                     if pi: pi["value"] = new_title; pi["sub"] = params.get("new_game_platform","PC") + " · just started"
                 else:
@@ -464,14 +551,25 @@ class Handler(BaseHTTPRequestHandler):
                     cb["cover_url"] = params.get("book_cover","")
                     cb["started"]   = params.get("book_started","")
                     cb["progress"]  = round(int(params.get("book_progress",0)) / 100, 2)
-                    # sync now panel reading sub
                     ri = now_item(now, "Reading")
                     if ri:
                         pct = int(cb["progress"]*100)
                         ri["value"] = btitle
                         ri["sub"]   = "by " + cb["author"] + (" · " + str(pct) + "%" if pct else "")
 
-            ok = save_and_push(now, games, books)
+            # ── pigeons roster ───────────────────────────────────
+            pj = params.get("pigeons_json","").strip()
+            if pj:
+                try:
+                    new_birds = json.loads(pj)
+                    pigeons["birds"] = [
+                        {"name": b["name"], "spot": b.get("spot","")}
+                        for b in new_birds if b.get("name","").strip()
+                    ]
+                except Exception:
+                    pass  # keep existing on parse error
+
+            ok = save_and_push(now, games, books, pigeons)
             resp = json.dumps({"ok": ok, "error": "git push failed" if not ok else ""})
 
         except Exception as e:

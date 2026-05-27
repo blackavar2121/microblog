@@ -14,21 +14,36 @@
     return m ? m[1] : null;
   }
 
-  function render(roster, photoMap) {
+  function fmtDate(iso) {
+    if (!iso) return '';
+    try {
+      return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    } catch(e) { return ''; }
+  }
+
+  function render(roster, photoMap, dateMap) {
     if (!roster.length) {
       root.innerHTML = '<p class="mono small dim">No pigeons catalogued yet.</p>';
       return;
     }
 
     var featured  = roster[0];
-    var featPhoto = photoMap[featured.name.toLowerCase()];
+    var key0      = featured.name.toLowerCase();
+    var featPhoto = photoMap[key0];
+    var featDate  = fmtDate(dateMap[key0]);
 
     var featArt = featPhoto
       ? '<img src="' + featPhoto + '" alt="' + featured.name + '" class="pigeons-detail__photo pigeons-detail__photo--img" />'
-      : '<div class="ph iri pigeons-detail__photo" data-label="pigeon \xb7 ' + featured.name.toLowerCase() + '"></div>';
+      : '<div class="ph iri pigeons-detail__photo" data-label="pigeon \xb7 ' + key0 + '"></div>';
+
+    var featMeta = featDate
+      ? featured.spot + ' \xb7 ' + featDate
+      : featured.spot;
 
     var rosterHTML = roster.map(function (b, i) {
-      var photo = photoMap[b.name.toLowerCase()];
+      var key   = b.name.toLowerCase();
+      var photo = photoMap[key];
+      var date  = fmtDate(dateMap[key]);
       var thumb = photo
         ? '<img src="' + photo + '" alt="' + b.name + '" class="roster__photo roster__photo--img" />'
         : '<div class="ph roster__photo" aria-hidden="true"></div>';
@@ -39,7 +54,7 @@
         +   '<div class="serif-d roster__name">' + b.name + '</div>'
         +   '<div class="mono small dim">' + b.spot + '</div>'
         + '</div>'
-        + '<span class="mono small dim">' + b.date + '</span>'
+        + '<span class="mono small dim">' + (date || '') + '</span>'
         + '</li>';
     }).join('');
 
@@ -55,8 +70,7 @@
       +   '<section>'
       +     featArt
       +     '<h2 class="serif-d pigeons-detail__name">' + featured.name + '</h2>'
-      +     '<p class="serif italic dim">Last spotted at the ' + featured.spot + ', on ' + featured.date + '.</p>'
-      +     '<p class="serif pigeons-detail__note">' + featured.note + '</p>'
+      +     '<p class="serif italic dim">' + featMeta + '</p>'
       +   '</section>'
       +   '<section>'
       +     '<div class="eyebrow">The roster</div>'
@@ -77,30 +91,33 @@
     var feed   = results[1];
 
     var photoMap    = {};
+    var dateMap     = {};
     var latestPhoto = null;
+    var latestDate  = null;
 
     (feed.items || []).forEach(function (item) {
       var img = firstImg(item.content_html);
       if (!img) return;
-      if (!latestPhoto) latestPhoto = img;
+      if (!latestPhoto) { latestPhoto = img; latestDate = item.date_published || null; }
       var text = ((item.content_text || '') + ' ' + (item.title || '')).toLowerCase();
       roster.forEach(function (b) {
         var key = b.name.toLowerCase();
         if (!photoMap[key] && text.indexOf(key) !== -1) {
           photoMap[key] = img;
+          dateMap[key]  = item.date_published || null;
         }
       });
     });
 
-    /* Featured bird always gets the most recent photo as a fallback */
+    /* Featured bird always gets the most recent photo + date as fallback */
     if (roster.length && latestPhoto) {
       var featKey = roster[0].name.toLowerCase();
-      if (!photoMap[featKey]) photoMap[featKey] = latestPhoto;
+      if (!photoMap[featKey]) { photoMap[featKey] = latestPhoto; dateMap[featKey] = latestDate; }
     }
 
-    render(roster, photoMap);
+    render(roster, photoMap, dateMap);
   }).catch(function () {
-    render([], {});
+    render([], {}, {});
   });
 }());
 </script>
