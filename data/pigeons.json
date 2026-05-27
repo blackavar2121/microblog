@@ -1,0 +1,10 @@
+{
+  "birds": [
+    { "name": "Mottle",    "spot": "fire escape",   "date": "2026-05-23", "note": "White-flecked, very brave." },
+    { "name": "Two-Toes",  "spot": "bakery awning", "date": "2026-05-19", "note": "Missing the right outer toe." },
+    { "name": "The Mayor", "spot": "town square",   "date": "2026-05-17", "note": "Massive. Commands a flock of nine." },
+    { "name": "Iris",      "spot": "rooftop",       "date": "2026-05-15", "note": "The greenest neck I have ever seen." },
+    { "name": "Pip",       "spot": "cafe terrace",  "date": "2026-05-12", "note": "Tiny. Eats only sesame seeds." },
+    { "name": "Smoke",     "spot": "park bench",    "date": "2026-05-08", "note": "Almost entirely charcoal." }
+  ]
+}

@@ -9,33 +9,25 @@
   var root = document.querySelector('.js-pigeons-root');
   if (!root) return;
 
-  /* Roster from data/pigeons.yml — Hugo serialises it at build time */
-  var ROSTER = [
-    {{ range .Site.Data.pigeons.birds -}}
-    { name: {{ .name | jsonify }}, spot: {{ .spot | jsonify }}, date: {{ .date | jsonify }}, note: {{ .note | jsonify }} },
-    {{ end -}}
-  ];
-
-  /* Pull the first <img src="…"> out of a content_html string */
   function firstImg(html) {
     var m = (html || '').match(/<img[^>]+src="([^"]+)"/i);
     return m ? m[1] : null;
   }
 
-  function render(photoMap) {
-    if (!ROSTER.length) {
+  function render(roster, photoMap) {
+    if (!roster.length) {
       root.innerHTML = '<p class="mono small dim">No pigeons catalogued yet.</p>';
       return;
     }
 
-    var featured = ROSTER[0];
+    var featured  = roster[0];
     var featPhoto = photoMap[featured.name.toLowerCase()];
 
     var featArt = featPhoto
       ? '<img src="' + featPhoto + '" alt="' + featured.name + '" class="pigeons-detail__photo pigeons-detail__photo--img" />'
-      : '<div class="ph iri pigeons-detail__photo" data-label="pigeon · ' + featured.name.toLowerCase() + '"></div>';
+      : '<div class="ph iri pigeons-detail__photo" data-label="pigeon \xb7 ' + featured.name.toLowerCase() + '"></div>';
 
-    var rosterHTML = ROSTER.map(function (b, i) {
+    var rosterHTML = roster.map(function (b, i) {
       var photo = photoMap[b.name.toLowerCase()];
       var thumb = photo
         ? '<img src="' + photo + '" alt="' + b.name + '" class="roster__photo roster__photo--img" />'
@@ -57,7 +49,7 @@
       +     '<div class="eyebrow eyebrow--leader">Catalogue</div>'
       +     '<h1 class="serif-d page-header__title">Pigeons.</h1>'
       +   '</div>'
-      +   '<div class="mono small dim text-right">' + ROSTER.length + ' catalogued · ongoing</div>'
+      +   '<div class="mono small dim text-right">' + roster.length + ' catalogued \xb7 ongoing</div>'
       + '</header>'
       + '<div class="pigeons-detail">'
       +   '<section>'
@@ -74,39 +66,41 @@
       + '</div>';
   }
 
-  /* Fetch pigeon posts and build name → photo URL map */
-  fetch('https://bricolage.micro.blog/categories/pigeons/feed.json')
-    .then(function (r) { return r.json(); })
-    .then(function (feed) {
-      var photoMap = {};
-      var latestPhoto = null;   /* most recent photo in feed, any post */
+  var rosterURL = 'https://raw.githubusercontent.com/blackavar2121/microblog/main/data/pigeons.json';
+  var feedURL   = 'https://bricolage.micro.blog/categories/pigeons/feed.json';
 
-      (feed.items || []).forEach(function (item) {
-        var img = firstImg(item.content_html);
-        if (!img) return;
-        /* Track the most recent photo across all pigeon posts */
-        if (!latestPhoto) latestPhoto = img;
-        /* Try to match a specific bird by name appearing in the post text */
-        var text = ((item.content_text || '') + ' ' + (item.title || '')).toLowerCase();
-        ROSTER.forEach(function (b) {
-          var key = b.name.toLowerCase();
-          if (!photoMap[key] && text.indexOf(key) !== -1) {
-            photoMap[key] = img;
-          }
-        });
+  Promise.all([
+    fetch(rosterURL).then(function (r) { return r.json(); }),
+    fetch(feedURL).then(function (r) { return r.json(); }).catch(function () { return { items: [] }; })
+  ]).then(function (results) {
+    var roster = (results[0].birds || []);
+    var feed   = results[1];
+
+    var photoMap    = {};
+    var latestPhoto = null;
+
+    (feed.items || []).forEach(function (item) {
+      var img = firstImg(item.content_html);
+      if (!img) return;
+      if (!latestPhoto) latestPhoto = img;
+      var text = ((item.content_text || '') + ' ' + (item.title || '')).toLowerCase();
+      roster.forEach(function (b) {
+        var key = b.name.toLowerCase();
+        if (!photoMap[key] && text.indexOf(key) !== -1) {
+          photoMap[key] = img;
+        }
       });
-
-      /* Featured bird (ROSTER[0]) gets the most recent photo as fallback
-         so there's always something to show even when posts don't name a bird */
-      if (ROSTER.length && latestPhoto) {
-        var featKey = ROSTER[0].name.toLowerCase();
-        if (!photoMap[featKey]) photoMap[featKey] = latestPhoto;
-      }
-
-      render(photoMap);
-    })
-    .catch(function () {
-      render({});
     });
+
+    /* Featured bird always gets the most recent photo as a fallback */
+    if (roster.length && latestPhoto) {
+      var featKey = roster[0].name.toLowerCase();
+      if (!photoMap[featKey]) photoMap[featKey] = latestPhoto;
+    }
+
+    render(roster, photoMap);
+  }).catch(function () {
+    render([], {});
+  });
 }());
 </script>
