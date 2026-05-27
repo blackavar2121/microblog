@@ -1,112 +1,81 @@
-<div class="grid-1col" data-tpl="games">
-  <header class="games-header">
-    <div>
-      <div class="eyebrow eyebrow--leader">Games journal</div>
-      <h1 class="serif-d page-header__title">Games.</h1>
-    </div>
-    <div class="stat-row mono">
-      <div class="stat"><div class="stat__label">Now</div><div class="stat__value serif-d" id="js-stat-now">—</div></div>
-      <div class="stat"><div class="stat__label">Backlog</div><div class="stat__value serif-d" id="js-stat-backlog">—</div></div>
-      <div class="stat"><div class="stat__label">Finished</div><div class="stat__value serif-d" id="js-stat-finished">—</div></div>
-    </div>
-  </header>
-
-  <div id="js-now-playing"></div>
-
-  <div class="two-col">
-    <section>
-      <div class="eyebrow">Backlog</div>
-      <ol class="rank-list" id="js-backlog">
-        <li class="mono small dim">Loading…</li>
-      </ol>
-    </section>
-    <section>
-      <div class="eyebrow">Finished</div>
-      <ul class="date-list" id="js-finished">
-        <li class="mono small dim">Loading…</li>
-      </ul>
-    </section>
-  </div>
-
-  {{ if gt (len .Pages) 0 }}
-    <hr class="rule" />
-    <div class="eyebrow eyebrow--leader">Posts about games</div>
-    <ul class="post-list">
-      {{ range first 6 .Pages }}<li>{{ partial "post-card.html" . }}</li>{{ end }}
-    </ul>
-  {{ end }}
-</div>
+{{/* Games page — entire UI is JS-rendered to survive Micro.blog's multi-template stacking */}}
+<div class="js-games-root"></div>
 
 <script>
-/* Dedup: if this template rendered twice, remove all but the last instance */
 (function () {
-  var els = document.querySelectorAll('[data-tpl="games"]');
-  for (var i = 0; i < els.length - 1; i++) els[i].remove();
-}());
+  if (window.__gamesMounted) return;
+  window.__gamesMounted = true;
 
-(function () {
-  var RAW = 'https://raw.githubusercontent.com/blackavar2121/microblog/main/data/games.json';
+  var root = document.querySelector('.js-games-root');
+  if (!root) return;
 
-  function stars(rating) {
+  function stars(r) {
     var s = '';
-    for (var i = 0; i < 5; i++) {
-      s += i < rating ? '★' : '<span class="dim">★</span>';
-    }
+    for (var i = 0; i < 5; i++) s += i < r ? '★' : '<span class="dim">★</span>';
     return s;
   }
 
-  fetch(RAW)
-    .then(function (r) { return r.json(); })
-    .then(function (d) {
+  function render(d) {
+    var np = d.now_playing || [];
+    var bl = d.backlog     || [];
+    var fi = d.finished    || [];
 
-      // Stats
-      document.getElementById('js-stat-now').textContent      = d.now_playing.length;
-      document.getElementById('js-stat-backlog').textContent   = d.backlog.length;
-      document.getElementById('js-stat-finished').textContent  = d.finished.length;
+    var nowHTML = np.map(function (g) {
+      return '<article class="now-playing">'
+        + '<div class="now-playing__art ph iri" aria-label="key art"></div>'
+        + '<div class="now-playing__body">'
+        + '<span class="badge badge--iri mono">Now playing</span>'
+        + '<h2 class="serif-d now-playing__title">' + g.title + '</h2>'
+        + '<p class="mono small dim">' + g.platform + ' · ' + g.hours + ' hours · started ' + g.started + '</p>'
+        + (g.note ? '<p class="serif italic dim now-playing__note">&ldquo;' + g.note + '&rdquo;</p>' : '')
+        + '</div></article>';
+    }).join('');
 
-      // Now playing
-      var nowEl = document.getElementById('js-now-playing');
-      if (d.now_playing.length) {
-        nowEl.innerHTML = d.now_playing.map(function (g) {
-          return '<article class="now-playing">'
-            + '<div class="now-playing__art ph iri" aria-label="key art"></div>'
-            + '<div class="now-playing__body">'
-            + '<span class="badge badge--iri mono">Now playing</span>'
-            + '<h2 class="serif-d now-playing__title">' + g.title + '</h2>'
-            + '<p class="mono small dim">' + g.platform + ' · ' + g.hours + ' hours · started ' + g.started + '</p>'
-            + (g.note ? '<p class="serif italic dim now-playing__note">&ldquo;' + g.note + '&rdquo;</p>' : '')
-            + '</div></article>';
-        }).join('');
-      }
-
-      // Backlog
-      var backlogEl = document.getElementById('js-backlog');
-      if (d.backlog.length) {
-        backlogEl.innerHTML = d.backlog.map(function (b, i) {
+    var backlogHTML = bl.length
+      ? bl.map(function (b, i) {
           return '<li>'
             + '<span class="mono small dim">' + String(i + 1).padStart(2, '0') + '</span>'
             + '<span class="serif-d">' + b.title + '</span>'
             + '<span class="mono small dim">' + b.platform + '</span>'
             + '</li>';
-        }).join('');
-      } else {
-        backlogEl.innerHTML = '<li class="mono small dim">Nothing queued up yet.</li>';
-      }
+        }).join('')
+      : '<li class="mono small dim">Nothing queued up yet.</li>';
 
-      // Finished
-      var finishedEl = document.getElementById('js-finished');
-      if (d.finished.length) {
-        finishedEl.innerHTML = d.finished.map(function (g) {
+    var finishedHTML = fi.length
+      ? fi.map(function (g) {
           return '<li>'
             + '<time class="mono small dim">' + g.finished + '</time>'
             + '<span class="serif-d">' + g.title + '</span>'
             + '<span class="stars" aria-label="' + g.rating + ' of 5 stars">' + stars(g.rating) + '</span>'
             + '</li>';
-        }).join('');
-      } else {
-        finishedEl.innerHTML = '<li class="mono small dim">Nothing finished yet.</li>';
-      }
-    })
-    .catch(function () { /* leave loading text in place */ });
+        }).join('')
+      : '<li class="mono small dim">Nothing finished yet.</li>';
+
+    root.innerHTML = '<div class="grid-1col">'
+      + '<header class="games-header">'
+      +   '<div>'
+      +     '<div class="eyebrow eyebrow--leader">Games journal</div>'
+      +     '<h1 class="serif-d page-header__title">Games.</h1>'
+      +   '</div>'
+      +   '<div class="stat-row mono">'
+      +     '<div class="stat"><div class="stat__label">Now</div><div class="stat__value serif-d">' + np.length + '</div></div>'
+      +     '<div class="stat"><div class="stat__label">Backlog</div><div class="stat__value serif-d">' + bl.length + '</div></div>'
+      +     '<div class="stat"><div class="stat__label">Finished</div><div class="stat__value serif-d">' + fi.length + '</div></div>'
+      +   '</div>'
+      + '</header>'
+      + nowHTML
+      + '<div class="two-col">'
+      +   '<section><div class="eyebrow">Backlog</div><ol class="rank-list">' + backlogHTML + '</ol></section>'
+      +   '<section><div class="eyebrow">Finished</div><ul class="date-list">' + finishedHTML + '</ul></section>'
+      + '</div>'
+      + '</div>';
+  }
+
+  fetch('https://raw.githubusercontent.com/blackavar2121/microblog/main/data/games.json')
+    .then(function (r) { return r.json(); })
+    .then(render)
+    .catch(function () {
+      root.innerHTML = '<p class="mono small dim">Could not load games data.</p>';
+    });
 }());
 </script>
