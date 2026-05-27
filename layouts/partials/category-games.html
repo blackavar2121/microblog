@@ -1,4 +1,4 @@
-<div class="grid-1col">
+<div class="grid-1col" data-tpl="games">
   <header class="games-header">
     <div>
       <div class="eyebrow eyebrow--leader">Games journal</div>
@@ -38,6 +38,12 @@
 </div>
 
 <script>
+/* Dedup: if this template rendered twice, remove all but the last instance */
+(function () {
+  var els = document.querySelectorAll('[data-tpl="games"]');
+  for (var i = 0; i < els.length - 1; i++) els[i].remove();
+}());
+
 (function () {
   var RAW = 'https://raw.githubusercontent.com/blackavar2121/microblog/main/data/games.json';
 
