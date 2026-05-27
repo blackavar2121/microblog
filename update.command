@@ -252,6 +252,12 @@ def build_html(now, games, books, pigeons):
         <input name="game_hours" type="number" min="0" step="0.5" value="{val(np,'hours',0)}">
       </div>
     </div>
+    <div class="grid" style="margin-top:1rem">
+      <div class="field" style="grid-column:span 2">
+        <label>Steam page URL (optional)</label>
+        <input name="game_steam_url" placeholder="https://store.steampowered.com/app/…" value="{val(np,'steam_url')}">
+      </div>
+    </div>
 
     <button type="button" class="finish-toggle" onclick="toggleFinish(this)">
       + Mark as finished &amp; start new game
@@ -274,6 +280,10 @@ def build_html(now, games, books, pigeons):
       <div class="field">
         <label>New game platform</label>
         <input name="new_game_platform" value="PC">
+      </div>
+      <div class="field" style="grid-column:span 2">
+        <label>New game Steam URL (optional)</label>
+        <input name="new_game_steam_url" placeholder="https://store.steampowered.com/app/…">
       </div>
     </div>
 
@@ -501,21 +511,26 @@ class Handler(BaseHTTPRequestHandler):
             if finish_game and games["now_playing"]:
                 old = games["now_playing"][0]
                 rating = int(params.get("game_rating", 4))
-                games["finished"].insert(0, {
+                fin_entry = {
                     "title":    old["title"],
                     "platform": old["platform"],
                     "finished": finish_game,
                     "rating":   rating,
-                })
+                }
+                if old.get("steam_url"): fin_entry["steam_url"] = old["steam_url"]
+                games["finished"].insert(0, fin_entry)
                 new_title = params.get("new_game_title","").strip()
                 if new_title:
                     from datetime import date as dt
-                    games["now_playing"] = [{
+                    new_entry = {
                         "title":    new_title,
                         "platform": params.get("new_game_platform","PC"),
                         "hours":    0,
                         "started":  str(dt.today()),
-                    }]
+                    }
+                    new_steam = params.get("new_game_steam_url","").strip()
+                    if new_steam: new_entry["steam_url"] = new_steam
+                    games["now_playing"] = [new_entry]
                     pi = now_item(now, "Playing")
                     if pi: pi["value"] = new_title; pi["sub"] = params.get("new_game_platform","PC") + " · just started"
                 else:
@@ -530,6 +545,9 @@ class Handler(BaseHTTPRequestHandler):
                     np["title"]    = title
                     np["platform"] = params.get("game_platform","PC")
                     np["hours"]    = float(params.get("game_hours",0) or 0)
+                    steam = params.get("game_steam_url","").strip()
+                    if steam: np["steam_url"] = steam
+                    elif "steam_url" in np: del np["steam_url"]
 
             # ── book: update or finish ────────────────────────────
             finish_book = params.get("book_fin_date","").strip()
