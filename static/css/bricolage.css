@@ -477,14 +477,14 @@ html[data-fonts="hyperlegible"] .serif-d { font-weight: 700; letter-spacing: -0.
 
 .now-playing {
   display: grid;
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: 160px 1fr;
   gap: var(--s-5);
   padding: var(--s-4);
   background: var(--surface);
   border: 1px solid var(--line);
   margin-bottom: var(--s-6);
 }
-.now-playing__art { width: 200px; height: 130px; }
+.now-playing__art { width: 160px; height: 213px; object-fit: cover; flex-shrink: 0; border-radius: 4px; }
 .now-playing__body { display: flex; flex-direction: column; justify-content: center; }
 .now-playing__title {
   font-size: 30px;
