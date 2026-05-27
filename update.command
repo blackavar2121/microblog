@@ -254,8 +254,17 @@ def build_html(now, games, books, pigeons):
     </div>
     <div class="grid" style="margin-top:1rem">
       <div class="field" style="grid-column:span 2">
-        <label>Steam page URL (optional)</label>
-        <input name="game_steam_url" placeholder="https://store.steampowered.com/app/…" value="{val(np,'steam_url')}">
+        <label>Steam page URL (optional — cover art fills in automatically)</label>
+        <input id="game_steam_url" name="game_steam_url"
+               placeholder="https://store.steampowered.com/app/…"
+               value="{val(np,'steam_url')}"
+               oninput="fillCoverFromSteam(this.value)">
+      </div>
+      <div class="field" style="grid-column:span 2">
+        <label>Cover image URL (auto-filled from Steam, or paste any image URL)</label>
+        <input id="game_cover_url" name="game_cover_url"
+               placeholder="https://…"
+               value="{val(np,'cover_url')}">
       </div>
     </div>
 
@@ -374,6 +383,15 @@ def build_html(now, games, books, pigeons):
 </div>
 
 <script>
+/* ── Steam cover auto-fill ── */
+function fillCoverFromSteam(url) {{
+  var m = url.match(/store\.steampowered\.com\/app\/(\d+)/);
+  var coverField = document.getElementById('game_cover_url');
+  if (m && !coverField.value) {{
+    coverField.value = 'https://cdn.cloudflare.steamstatic.com/steam/apps/' + m[1] + '/library_600x900.jpg';
+  }}
+}}
+
 /* ── initial birds from server ── */
 var birds = {birds_js};
 
@@ -518,6 +536,7 @@ class Handler(BaseHTTPRequestHandler):
                     "rating":   rating,
                 }
                 if old.get("steam_url"): fin_entry["steam_url"] = old["steam_url"]
+                if old.get("cover_url"): fin_entry["cover_url"] = old["cover_url"]
                 games["finished"].insert(0, fin_entry)
                 new_title = params.get("new_game_title","").strip()
                 if new_title:
@@ -548,6 +567,9 @@ class Handler(BaseHTTPRequestHandler):
                     steam = params.get("game_steam_url","").strip()
                     if steam: np["steam_url"] = steam
                     elif "steam_url" in np: del np["steam_url"]
+                    cover = params.get("game_cover_url","").strip()
+                    if cover: np["cover_url"] = cover
+                    elif "cover_url" in np: del np["cover_url"]
 
             # ── book: update or finish ────────────────────────────
             finish_book = params.get("book_fin_date","").strip()
