@@ -196,7 +196,10 @@ html[data-fonts="hyperlegible"] .serif-d { font-weight: 700; letter-spacing: -0.
 
 @media (max-width: 960px) {
   .grid-3col { grid-template-columns: 1fr; }
-  .sidebar, .now-panel { border: 0; padding: var(--s-5) var(--s-5); }
+  /* Feed first, subscribe/social second, sidebar (about + tags) last */
+  .feed     { order: 1; }
+  .now-panel { order: 2; border: 0; padding: var(--s-5) var(--s-5); position: static; }
+  .sidebar  { order: 3; border: 0; padding: var(--s-5) var(--s-5); }
 }
 
 /* ─── Sidebar (left) ─── */
@@ -657,22 +660,49 @@ html[data-fonts="hyperlegible"] .serif-d { font-weight: 700; letter-spacing: -0.
 
 /* ─── Responsive ─── */
 @media (max-width: 720px) {
+  /* Header: brand + icons share one row; nav wraps below */
   .site-header {
-    grid-template-columns: 1fr;
-    gap: var(--s-3);
-    padding: 18px var(--s-5);
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "brand actions"
+      "nav   nav";
+    gap: var(--s-2) 0;
+    padding: 14px var(--s-5);
   }
-  .nav { justify-content: flex-start; flex-wrap: wrap; }
-  .header-actions { justify-content: flex-end; }
-  .grid-1col { padding: var(--s-5) var(--s-5); }
-  .feed { padding: var(--s-5); }
+  .brand          { grid-area: brand; }
+  .nav            { grid-area: nav; justify-content: flex-start; flex-wrap: wrap; margin-top: 2px; }
+  .header-actions { grid-area: actions; align-self: center; }
+
+  /* Page padding */
+  .grid-1col { padding: var(--s-5) var(--s-4); }
+  .feed { padding: var(--s-5) var(--s-4); }
+
+  /* Photos */
   .photo-grid { grid-template-columns: 1fr; }
   .photo-grid__lead img, .photo-grid__lead .ph { height: 280px; }
+
+  /* Books / games / pigeons grids */
   .book-grid--reading, .two-col, .pigeons-detail { grid-template-columns: 1fr; }
   .games-header, .pigeons-header { flex-direction: column; align-items: flex-start; gap: var(--s-3); }
+
+  /* Now-playing card: go full-width when stacked */
   .now-playing { grid-template-columns: 1fr; }
-  .now-playing__art { width: 100%; }
-  .post-card__title { font-size: 28px; }
-  .prose__title { font-size: 32px; }
+  .now-playing__art-wrap { width: 100%; min-width: 0; height: 200px; }
+  .now-playing__art { object-position: center center; }
+
+  /* Micropost: tighter timestamp column */
+  .micropost { grid-template-columns: 58px 1fr; gap: 12px; }
+
+  /* Typography */
+  .post-card__title  { font-size: 28px; }
+  .prose__title      { font-size: 32px; }
   .page-header__title { font-size: 34px; }
+
+  /* Footer */
+  .site-footer__inner {
+    padding: var(--s-5) var(--s-4);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--s-3);
+  }
 }
